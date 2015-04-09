@@ -72,7 +72,7 @@ def install(install):
 				click.echo('\033[0;32mPackage "%s" is installed.\033[0m' % install[a])
 			else:
 				click.echo('\033[0;31mPackage "%s" is not installed.\033[0m' % install[a])
-	elif install[0] == 'list' or install[0] == 'l':
+	elif install[0] == 'list' or install[0] == 'l' or install[0] == 'installed':
 		v = open(gpmdir + '/installed/_installed.gpm', 'r')
 		click.echo('\033[1;30mINSTALLED PACKAGES')
 		click.echo('==================\033[0m')
@@ -88,12 +88,13 @@ def install(install):
 			click.echo('GPM\'s removal was cancelled.\033[0m')
 	elif install[0] == 'help':
 		click.echo('\033[1;30mUSAGE:\033[0m')
-		click.echo('\tgpm install [package] [package2]')
-		click.echo('\tgpm remove [package] [package2]')
-		click.echo('\tgpm check [package] [package2] to see if [package] is installed')
-		click.echo('\t"gpm list" to view all installed packages')
-		click.echo('\t"gpm die" to completely remove')
-		click.echo('\n')
+		click.echo('\t\033[0;32mgpm install [package] [package2]\033[0m')
+		click.echo('\t\033[0;31mgpm remove [package] [package2]\033[0m')
+		click.echo('\t\033[0;34mgpm check [package] [package2]\033[0m to see if [package] is installed')
+		click.echo('\t\033[0;34mgpm list\033[0m to view all installed packages')
+		click.echo('\t\033[0;34mgpm die\033[0m to completely remove')
+	else:
+		click.echo('\033[0;31mUnknown parameter "%s"\033[0m' % install)
 
 if __name__ == '__main__':
 	install()
