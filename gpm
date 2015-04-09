@@ -2,7 +2,10 @@
 import click
 from os import listdir, path, remove
 import json
-import urllib
+try:
+	import urllib.request
+except:
+	import urllib
 from subprocess import call
 from shutil import copy, rmtree
 
@@ -28,7 +31,10 @@ def install(install):
 					m = open(gpmdir + '/pkg/' + z, 'r')
 					f = json.loads(m.read())
 					p = gpmdir + '/tmp/' + install[a]
-					urllib.urlretrieve(f['url'], p) 
+					try:
+						urllib.urlretrieve(f['url'], p) 
+					except AttributeError:
+						urllib.request.urlretrieve(f['url'], p) 
 					g = f['commands']
 					for y in range(len(g)):
 						call(g[y].format(FILENAME=p, GPMDIR=gpmdir), shell=True)
