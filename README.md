@@ -20,6 +20,28 @@ Then, to add GPM to your path, restart or run:
 . ~/.profile
 ```
 
+##Behind-the-Scenes Magic
+GPM creates a folder in your home directory called .gpm. This is its structure:
+
+```
+.gpm
+ +-- installed
+ |   +-- _installed.gpm
+ |   +-- gpm
+ +-- pkg
+ |   +-- _templates
+ |   |   +-- shell_temlate.gpm
+ |   |   +-- compiled_template.gpm
+ |   +-- node.gpm
+ |   +-- composer.gpm
+ +-- tmp
+```
+The "installed" folder is the actual directory that gets added to your PATH. All packages installed by GPM go here, as well as GPM itself.
+
+Next, all the installer files go in the "pkg" directory. In it there are two templates (also below in the FAQ) for making your own package. Then, there are the actual package files in the root of "pkg".
+
+Finally, there is an empty directory called "tmp". As you can imagine, this is where all the temporary files go when installing a new package.
+
 ##Usage
 Using GPM is relatively simple. 
 
