@@ -4,7 +4,7 @@ from os import listdir, path, remove
 import json
 import urllib
 from subprocess import call
-from shutil import copy
+from shutil import copy, rmtree
 
 @click.command()
 @click.argument('install', nargs=-1, required=True)
@@ -74,15 +74,22 @@ def install(install):
 				click.echo('\033[0;31mPackage "%s" is not installed.\033[0m' % install[a])
 	elif install[0] == 'list':
 		v = open(gpmdir + '/installed/_installed.gpm', 'r')
-		click.echo('INSTALLED PACKAGES')
-		click.echo('==================')
+		click.echo('\033[1;30mINSTALLED PACKAGES')
+		click.echo('==================\033[0m')
 		click.echo(v.read())
 		v.close()
+	elif install[0] == 'die':
+		click.echo('This will remove GPM and all its installed packages from your system. Are you sure you want to continue?')
+		kill_prompt = str(raw_input('Anything other than "yes" will cancel. >'))
+		if kill_prompt.lower() == 'yes':
+			rmtree(gpmdir)
+			click.echo('GPM was successfully removed from your system.')
 	elif install[0] == 'help':
 		click.echo('USAGE:')
 		click.echo('\tgpm install [package] [package2]')
 		click.echo('\tgpm remove [package] [package2]')
 		click.echo('\tgpm check [package] [package2] to see if [package] is installed')
 		click.echo('\t"gpm list" to view all installed packages\n')
+
 if __name__ == '__main__':
 	install()
