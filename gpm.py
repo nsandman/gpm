@@ -4,7 +4,7 @@ from os import listdir, path, remove
 import json
 try:
 	import urllib.request
-except:
+except  ImportError:
 	import urllib
 from subprocess import call
 from shutil import copy, rmtree
