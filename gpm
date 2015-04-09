@@ -1,0 +1,45 @@
+#!/usr/bin/python
+import click
+from os import listdir, path, remove
+import json
+import urllib
+from subprocess import call
+from shutil import copy
+
+@click.command()
+@click.argument('install', nargs=-1, required=True)
+
+def install(install):
+	gpmdir = path.expanduser('~') + '/.gpm'
+	if install[0] == 'install' or install[0] == 'i':
+		for a in range(1, len(install)):
+			y = listdir(gpmdir + '/pkg')
+			try:
+				z = install[a] + '.gpm'
+				x = y.index(z)
+				click.echo('Package "%s" found, installing...' % install[a])
+				m = open(gpmdir + '/pkg/' + z, 'r')
+				f = json.loads(m.read())
+				p = gpmdir + '/tmp/' + install[a]
+				urllib.urlretrieve(f['url'], p) 
+				g = f['commands']
+				for y in range(len(g)):
+					call(g[y].format(FILENAME=p, GPMDIR=gpmdir), shell=True)
+				m.close()
+				copy(p, gpmdir + '/installed/')
+				e = gpmdir + '/tmp/'
+				for b in listdir(e):
+					remove(e + str(b))
+			except ValueError:
+				click.echo('Package "%s" not found, skipping...' % install[a])
+	elif install[0] == 'remove' or install[0] == 'r' or install[0] == 'delete' or install[0] == 'd' or install[0] == 'destroy':
+		for a in range(1, len(install)):
+			try:
+				remove(gpmdir + '/installed/' + install[a])
+				click.echo('Package "%s" found, removing...' % install[a])
+			except OSError:
+				click.echo('Package "%s" not found, skipping...' % install[a])
+		click.echo('Done.')
+
+if __name__ == '__main__':
+	install()
