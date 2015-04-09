@@ -3,7 +3,7 @@
 This is a lightweight package manager designed to be easy to use and easy to make packages for. It is inspired by Homebrew, but is different in many regards:
 
 1. Packages are JSON files with one URL and bash commands, not Ruby scripts with methods.
-2. Packages are stored on a [server](http://github.com/gpm-packages), and you do **not** have to fork it to add custom packages.
+2. Packages are stored on a [server](http://github.com/nsandman09/gpm-packages), and you do **not** have to fork it to add custom packages.
 3. GPM is written in Python, not Ruby, and is significantly smaller.
 4. GPM modifies your $PATH variable instead of symlinking all installs.
 
@@ -59,7 +59,7 @@ gpm u pkg
 
 ##FAQ
 ###So why is it "generic"?
-I dunno. The name "GPM" just sounds cool to me. I guess you could say it installs packages not for specific languages/environments (unlike, npm, pip, etc.). 
+I dunno. The name "GPM" just sounds cool to me. I guess you could say it installs packages not for specific languages/environments (unlike npm, pip, etc.). 
 
 ###Huh. So how do I make my own package?
 Easy! A simple package called "testing" (which, when run, echoes the word "testing" back.) would look like this:
