@@ -27,6 +27,9 @@ def install(install):
 					call(g[y].format(FILENAME=p, GPMDIR=gpmdir), shell=True)
 				m.close()
 				copy(p, gpmdir + '/installed/')
+				v = open(gpmdir + '/installed/_installed.gpm', 'a')
+				v.write(install[a] + "\n")
+				v.close()
 				e = gpmdir + '/tmp/'
 				for b in listdir(e):
 					remove(e + str(b))
@@ -36,10 +39,23 @@ def install(install):
 		for a in range(1, len(install)):
 			try:
 				remove(gpmdir + '/installed/' + install[a])
+				v = open(gpmdir + '/installed/_installed.gpm', 'r')
+				lines = v.readlines()
+				v.close()
+				v = open(gpmdir + '/installed/_installed.gpm', 'w')
+				for line in lines:
+					if line != install[a] + '\n':
+						v.write(line)
+				v.close()
 				click.echo('Package "%s" found, removing...' % install[a])
 			except OSError:
 				click.echo('Package "%s" not found, skipping...' % install[a])
 		click.echo('Done.')
-
+	elif install[0] == 'list':
+		v = open(gpmdir + '/installed/_installed.gpm', 'r')
+		click.echo('INSTALLED PACKAGES')
+		click.echo('==================')
+		click.echo(v.read())
+		v.close()
 if __name__ == '__main__':
 	install()
