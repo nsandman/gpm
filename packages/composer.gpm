@@ -1,0 +1,9 @@
+{
+	"url": "http://getcomposer.org/installer",
+	"commands": [
+		"php {FILENAME} --install-dir=\"{GPMDIR}/tmp\"",
+		"rm {GPMDIR}/tmp/composer", 
+		"mv {GPMDIR}/tmp/composer.phar {FILENAME}",
+		"chmod +x {FILENAME}"
+	]
+}

@@ -1,0 +1,8 @@
+{
+	"url": "git://github.com/jnwhiteh/golang.git",
+	"commands": [
+		"./configure",
+		"make",
+		"make install"
+	]
+}

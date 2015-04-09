@@ -1,0 +1,22 @@
+// // // // // // // // // // // // // // 
+// This GPM package installs node.js.  //
+// It is also a template for most C or //
+// C++, etc (compiled) installs. Use   //
+//              it wisely.             //
+//           --Noah Sandman            //
+// // // // // // // // // // // // // //
+
+{
+	"url": "https://semver.io/node/stable",
+	"commands": [
+		"echo \"Downloading latest node.js source...\"",
+		"curl --progress-bar http://nodejs.org/dist/v`cat {FILENAME}`/node-v`cat {FILENAME}`.tar.gz > {GPMDIR}/tmp/node.tgz ",
+		"echo \"Extracting...\"",
+		"tar -xf {GPMDIR}/tmp/node.tgz -C {GPMDIR}/tmp",
+		"echo \"Done. Building (be patient!)...\"",
+		"{GPMDIR}/tmp/node-v`cat {FILENAME}`/configure --prefix={GPMDIR}/installed",
+		"make -C {GPMDIR}/tmp/node-v`cat {FILENAME}`",
+		"make -C install {GPMDIR}/tmp/node-v`cat {FILENAME}`",
+		"rm {FILENAME}"
+	]
+}

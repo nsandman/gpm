@@ -1,0 +1,6 @@
+{
+	"url": "http://links.bargonaut.com/gpm/testing",
+	"commands": [
+		"chmod +x {FILENAME}"
+	]
+}
