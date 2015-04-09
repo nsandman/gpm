@@ -6,13 +6,13 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 2. Packages are stored on a [server](http://github.com/nsandman09/gpm-packages), and you do **not** have to fork it to add custom packages.
 3. GPM is written in Python, not Ruby, and is significantly smaller.
 4. GPM modifies your $PATH variable instead of symlinking all installs.
-5. Oh, and it's cross-platform.
+5. Oh yeah, and it's cross-platform.
 
 ##Installation
 Installation is easy. Just run:
 
 ```bash
-curl http://pastebin.com/raw.php?i=njyLkDFY | bash
+curl -s http://pastebin.com/raw.php?i=njyLkDFY | perl
 ```
 
 Then, to add GPM to your path, restart or run:
