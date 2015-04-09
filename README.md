@@ -20,6 +20,44 @@ Then, to add GPM to your path, restart or run:
 . ~/.profile
 ```
 
+##Usage
+Using GPM is relatively simple. 
+
+**Note: The first letter of most of these commands will work (eg gpm i [package]). This is helpful for quick typing and scripting.**
+
+####Installing
+
+```bash
+gpm install [package]
+```
+
+####Removing
+```bash
+gpm remove [package]
+```
+
+####Check if Package(s) Installed
+```bash
+gpm check [package] [package2]
+```
+
+####List Installed Packages
+```bash
+gpm list
+```
+####Sync Package List with Server
+```bash
+gpm update packages
+```
+
+Or, a much shorter way:
+
+```bash
+gpm u pkg
+```
+
+
+##FAQ
 ###So why is it "generic"?
 I dunno. The name "GPM" just sounds cool to me. I guess you could say it installs packages not for specific languages/environments (unlike, npm, pip, etc.). 
 
