@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Gpm by nsandman09</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Gpm</h1>
+        <h2>Lightweight &quot;Generic Package Manager&quot;</h2>
+        <a href="https://github.com/nsandman09/gpm" class="button"><small>View project on</small> GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a id="gpm-generic-package-manager" class="anchor" href="#gpm-generic-package-manager" aria-hidden="true"><span class="octicon octicon-link"></span></a>GPM: Generic Package Manager</h1>
+
+<p>This is a lightweight package manager designed to be easy to use and easy to make packages for. It is inspired by Homebrew, but is different in many regards:</p>
+
+<ol>
+<li>Packages are JSON files with one URL and bash commands, not Ruby scripts with methods.</li>
+<li>Packages are stored on a <a href="http://github.com/nsandman09/gpm-packages">server</a>, and you do <strong>not</strong> have to fork it to add custom packages.</li>
+<li>GPM is written in Python, not Ruby, and is significantly smaller.</li>
+<li>GPM modifies your $PATH variable instead of symlinking all installs.</li>
+<li>Oh yeah, and it's cross-platform.</li>
+</ol>
+
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<p>Installation is easy. Just run:</p>
+
+<div class="highlight highlight-bash"><pre>curl -s http://pastebin.com/raw.php<span class="pl-k">?</span>i=njyLkDFY <span class="pl-k">|</span> perl</pre></div>
+
+<p>Then, to add GPM to your path, restart or run:</p>
+
+<div class="highlight highlight-bash"><pre><span class="pl-c1">.</span> <span class="pl-k">~</span>/.profile</pre></div>
+
+<h2>
+<a id="behind-the-scenes-magic" class="anchor" href="#behind-the-scenes-magic" aria-hidden="true"><span class="octicon octicon-link"></span></a>Behind-the-Scenes Magic</h2>
+
+<p>GPM creates a folder in your home directory called .gpm. This is its structure:</p>
+
+<pre><code>.gpm
+ +-- installed
+ |   +-- _installed.gpm
+ |   +-- gpm
+ +-- pkg
+ |   +-- _templates
+ |   |   +-- shell_temlate.gpm
+ |   |   +-- compiled_template.gpm
+ |   +-- node.gpm
+ |   +-- composer.gpm
+ +-- tmp
+</code></pre>
+
+<p>The "installed" folder is the actual directory that gets added to your PATH. All packages installed by GPM go here, as well as GPM itself.</p>
+
+<p>Next, all the installer files go in the "pkg" directory. In it there are two templates (also below in the FAQ) for making your own package. Then, there are the actual package files in the root of "pkg".</p>
+
+<p>Finally, there is an empty directory called "tmp". As you can imagine, this is where all the temporary files go when installing a new package.</p>
+
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
+
+<p>Using GPM is relatively simple. </p>
+
+<p><strong>Note: The first letter of most of these commands will work (eg gpm i [package]). This is helpful for quick typing and scripting.</strong></p>
+
+<h4>
+<a id="installing" class="anchor" href="#installing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installing</h4>
+
+<div class="highlight highlight-bash"><pre>gpm install [package]</pre></div>
+
+<h4>
+<a id="removing" class="anchor" href="#removing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Removing</h4>
+
+<div class="highlight highlight-bash"><pre>gpm remove [package]</pre></div>
+
+<h4>
+<a id="check-if-packages-installed" class="anchor" href="#check-if-packages-installed" aria-hidden="true"><span class="octicon octicon-link"></span></a>Check if Package(s) Installed</h4>
+
+<div class="highlight highlight-bash"><pre>gpm check [package] [package2]</pre></div>
+
+<h4>
+<a id="list-installed-packages" class="anchor" href="#list-installed-packages" aria-hidden="true"><span class="octicon octicon-link"></span></a>List Installed Packages</h4>
+
+<div class="highlight highlight-bash"><pre>gpm list</pre></div>
+
+<h4>
+<a id="sync-package-list-with-server" class="anchor" href="#sync-package-list-with-server" aria-hidden="true"><span class="octicon octicon-link"></span></a>Sync Package List with Server</h4>
+
+<div class="highlight highlight-bash"><pre>gpm update packages</pre></div>
+
+<p>Or, a much shorter way:</p>
+
+<div class="highlight highlight-bash"><pre>gpm u pkg</pre></div>
+
+<h2>
+<a id="faq" class="anchor" href="#faq" aria-hidden="true"><span class="octicon octicon-link"></span></a>FAQ</h2>
+
+<h3>
+<a id="so-why-is-it-generic" class="anchor" href="#so-why-is-it-generic" aria-hidden="true"><span class="octicon octicon-link"></span></a>So why is it "generic"?</h3>
+
+<p>I dunno. The name "GPM" just sounds cool to me. I guess you could say it installs packages not for specific languages/environments (unlike npm, pip, etc.). </p>
+
+<h3>
+<a id="huh-so-how-do-i-make-my-own-package" class="anchor" href="#huh-so-how-do-i-make-my-own-package" aria-hidden="true"><span class="octicon octicon-link"></span></a>Huh. So how do I make my own package?</h3>
+
+<p>Easy! A simple package called "testing" (which, when run, echoes the word "testing" back.) would look like this:</p>
+
+<div class="highlight highlight-javascript"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>http://links.bargonaut.com/gpm/testing<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>commands<span class="pl-pds">"</span></span><span class="pl-k">:</span> [
+        <span class="pl-s"><span class="pl-pds">"</span>chmod +x {FILENAME}<span class="pl-pds">"</span></span>
+    ]
+}</pre></div>
+
+<p>Looks simple enough. Let's break this down.</p>
+
+<p>GPM will first download the file in the URL. Then, it will run the commands in the array of the same name, giving you access to two variables:</p>
+
+<ul>
+<li>{FILENAME}: This is the path to the file downloaded from the URL.</li>
+<li>{GPMDIR}: This is the path to the GPM installation directory. This is usually ~/.gpm.</li>
+</ul>
+
+<p>Let's write a slightly more complex one. This downloads and installs node.js:</p>
+
+<div class="highlight highlight-javascript"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>https://semver.io/node/stable<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>commands<span class="pl-pds">"</span></span><span class="pl-k">:</span> [
+        <span class="pl-s"><span class="pl-pds">"</span>echo <span class="pl-cce">\"</span>Downloading latest node.js source...<span class="pl-cce">\"</span><span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>curl --progress-bar http://nodejs.org/dist/v`cat {FILENAME}`/node-v`cat {FILENAME}`.tar.gz &gt; {GPMDIR}/tmp/node.tgz <span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>echo <span class="pl-cce">\"</span>Extracting...<span class="pl-cce">\"</span><span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>tar -xf {GPMDIR}/tmp/node.tgz -C {GPMDIR}/tmp<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>echo <span class="pl-cce">\"</span>Done. Building (be patient!)...<span class="pl-cce">\"</span><span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>{GPMDIR}/tmp/node-v`cat {FILENAME}`/configure --prefix={GPMDIR}/installed<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>make -C {GPMDIR}/tmp/node-v`cat {FILENAME}`<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>make -C install {GPMDIR}/tmp/node-v`cat {FILENAME}`<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>rm {FILENAME}<span class="pl-pds">"</span></span>
+    ]
+}</pre></div>
+
+<p>It looks like a lot, but don't be daunted. Remove all the "echo" commands and it's easier to make sense of:</p>
+
+<div class="highlight highlight-javascript"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>https://semver.io/node/stable<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>commands<span class="pl-pds">"</span></span><span class="pl-k">:</span> [
+        <span class="pl-s"><span class="pl-pds">"</span>curl --progress-bar http://nodejs.org/dist/v`cat {FILENAME}`/node-v`cat {FILENAME}`.tar.gz &gt; {GPMDIR}/tmp/node.tgz <span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>tar -xf {GPMDIR}/tmp/node.tgz -C {GPMDIR}/tmp<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>{GPMDIR}/tmp/node-v`cat {FILENAME}`/configure --prefix={GPMDIR}/installed<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>make -C {GPMDIR}/tmp/node-v`cat {FILENAME}`<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>make -C install {GPMDIR}/tmp/node-v`cat {FILENAME}`<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>rm {FILENAME}<span class="pl-pds">"</span></span>
+    ]
+}</pre></div>
+
+<p>Okay, that's easier to read. Now let's look at this. It downloads the latest node version from <a href="http://www.semver.io">http://www.semver.io</a>. This is in the "url" field. So everywhere it says `cat {FILENAME}`, it's just putting the latest node.js version. So, assuming that's <strong>0.12.2</strong>, this will show up as:</p>
+
+<div class="highlight highlight-javascript"><pre>{
+    <span class="pl-s"><span class="pl-pds">"</span>url<span class="pl-pds">"</span></span><span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">"</span>https://semver.io/node/stable<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>commands<span class="pl-pds">"</span></span><span class="pl-k">:</span> [
+        <span class="pl-s"><span class="pl-pds">"</span>curl --progress-bar http://nodejs.org/dist/v0.12.2/node-v0.12.2.tar.gz &gt; {GPMDIR}/tmp/node.tgz <span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>tar -xf {GPMDIR}/tmp/node.tgz -C {GPMDIR}/tmp<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>{GPMDIR}/tmp/node-v0.12.2/configure --prefix={GPMDIR}/installed<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>make -C {GPMDIR}/tmp/node-v0.12.2<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>make -C install {GPMDIR}/tmp/node-v0.12.2<span class="pl-pds">"</span></span>,
+        <span class="pl-s"><span class="pl-pds">"</span>rm {FILENAME}<span class="pl-pds">"</span></span>
+    ]
+}</pre></div>
+
+<p>So it is now more obvious. All this script does is download the source, extract it, and run "./configure", "make", and "make install" with a few custom options.</p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/nsandman09/gpm/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/nsandman09/gpm/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/nsandman09/gpm"></a> is maintained by <a href="https://github.com/nsandman09">nsandman09</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
