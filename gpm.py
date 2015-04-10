@@ -99,8 +99,10 @@ def install(install):
 		click.echo('\t\033[0;34mgpm check [package] [package2]\033[0m to see if [package] is installed')
 		click.echo('\t\033[0;34mgpm list\033[0m to view all installed packages')
 		click.echo('\t\033[0;34mgpm die\033[0m to completely remove')
+	#elif install[0] == 'update' or install[0] == 'u':
+		#if install[1] == 'packages' or install[1] == 'pkg' or install[1] == 'pkgs':
 	else:
-		click.echo('\033[0;31mUnknown parameter "%s"\033[0m' % install)
+		click.echo('\033[0;31mUnknown parameter "%s"\033[0m' % install[1])
 
 if __name__ == '__main__':
 	install()

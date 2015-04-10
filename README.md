@@ -35,11 +35,16 @@ GPM creates a folder in your home directory called .gpm. This is its structure:
  |   |   +-- compiled_template.gpm
  |   +-- node.gpm
  |   +-- composer.gpm
+ +-- scripts
+ |   +-- update_pkg.pl
+ |   +-- update.pl
  +-- tmp
 ```
 The "installed" folder is the actual directory that gets added to your PATH. All packages installed by GPM go here, as well as GPM itself.
 
 Next, all the installer files go in the "pkg" directory. In it there are two templates (also below in the FAQ) for making your own package. Then, there are the actual package files in the root of "pkg".
+
+In "scripts", there are perl scripts to do various things. The names make them fairly self-explanatory. (Coming soon!)
 
 Finally, there is an empty directory called "tmp". As you can imagine, this is where all the temporary files go when installing a new package.
 
@@ -87,7 +92,7 @@ I dunno. The name "GPM" just sounds cool to me. I guess you could say it install
 ###Huh. So how do I make my own package?
 Easy! A simple package called "testing" (which, when run, echoes the word "testing" back.) would look like this:
 
-```javascript
+```json
 {
 	"url": "http://links.bargonaut.com/gpm/testing",
 	"commands": [
@@ -104,7 +109,7 @@ GPM will first download the file in the URL. Then, it will run the commands in t
 
 Let's write a slightly more complex one. This downloads and installs node.js:
 
-```javascript
+```json
 {
 	"url": "https://semver.io/node/stable",
 	"commands": [
@@ -122,7 +127,7 @@ Let's write a slightly more complex one. This downloads and installs node.js:
 ``` 
 It looks like a lot, but don't be daunted. Remove all the "echo" commands and it's easier to make sense of:
 
-```javascript
+```json
 {
 	"url": "https://semver.io/node/stable",
 	"commands": [
@@ -137,7 +142,7 @@ It looks like a lot, but don't be daunted. Remove all the "echo" commands and it
 ```
 Okay, that's easier to read. Now let's look at this. It downloads the latest node version from http://www.semver.io. This is in the "url" field. So everywhere it says \`cat {FILENAME}`, it's just putting the latest node.js version. So, assuming that's **0.12.2**, this will show up as:
 
-```javascript
+```json
 {
 	"url": "https://semver.io/node/stable",
 	"commands": [
