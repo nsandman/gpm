@@ -20,7 +20,7 @@ int main(int argc, const char *argv[]) {
 		for (int a = 2; a < argc; a++) {
 			string currentArg = argv[a];
 			cout << "\033[00;32mInstalling package \"" << currentArg << "\"...\033[0m\n";
-				string pkgURL = "https://github.com/nsandman09/gpm-packages/blob/master/" + currentArg + ".gpm";
+				string pkgURL = "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/" + currentArg + ".gpm";
 				cout << pkgURL;
 		}
 	} else {
