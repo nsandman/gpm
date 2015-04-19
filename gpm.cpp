@@ -12,6 +12,7 @@
 */
 
 #include <pwd.h>
+#include <regex>
 #include <fstream>
 #include <iostream>
 #include "curl/curl.h"
@@ -20,6 +21,7 @@
 std::string pkgURL;
 std::string currentArg;
 std::string returnedText;
+std::string currentCommand;
 std::string gpmdir = getenv("HOME");
 
 /* By "heikaman" from http://ubuntuforums.org/archive/index.php/t-1435926.html */
@@ -44,16 +46,24 @@ int main(int argc, const char *argv[]) {
 			if (returnedText == "Not Found") {
 				std::cout << "\033[00;31mThe package \"" << currentArg << "\" was not found.\033[0m\n";
 			} else {
+				std::string cfile = gpmdir + "/tmp/" + currentArg;
 				rapidjson::Document file;
 				file.Parse(returnedText.c_str());
 				rapidjson::Value &url = file["url"];
+				rapidjson::Value &cmds = file["commands"];
 				returnedText = "";
 				curl_easy_setopt(curl, CURLOPT_URL, url.GetString()); 
 				curl_easy_perform(curl);
 				std::ofstream dl;
-				dl.open(gpmdir + "/tmp/" + currentArg);
+				dl.open(cfile);
 				dl << returnedText;
 				dl.close();
+				for (int b = 0; b < cmds.Size(); b++) {
+					currentCommand = cmds[b].GetString();
+					std::regex fn ("%FILENAME");
+					std::cout << std::regex_replace(currentCommand, fn, cfile);
+					//std::cout << currentCommand;
+				}
 			}
 			returnedText = "";
 		}
