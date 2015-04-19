@@ -1,27 +1,44 @@
-/***********************
-*   ____ ____  __  __  *
-*  / ___|  _ \|  \/  | *
-* | |  _| |_) | |\/| | *
-* | |_| |  __/| |  | | *
-*  \____|_|   |_|  |_| *
-*    by Noah Sandman   *
-************************/
+/*
+        Project         
+ ––––––––––––––––––––––
+|   ____ ____  __  __  |
+|  / ___|  _ \|  \/  | |
+| | |  _| |_) | |\/| | |
+| | |_| |  __/| |  | | |
+|  \____|_|   |_|  |_| |
+|                      |
+|    by Noah Sandman   |
+ ––––––––––––––––––––––
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <pwd.h>
 #include <curl/curl.h>
 
-int main(int argc, const char *argv[]) {
-	// Get GPM file dir (~/.gpm)
-	char *gpmdir = strcat(getpwuid(getuid())->pw_dir, "/.gpm");
-	if (strcmp(argv[1], "install") == 0) { // See if first argument is "install"
-		// For ever arguments that is a package name
+/* NOTE: None of this code is tested with anything other than GCC 4.9
+   on OSX 10.10 Yosemite (installed with Homebrew) with the C11 setti
+   -ng. This probably will not work with other versions because of st
+   -ring formatting done weirdly and VLAs with malloc. */
+
+int main(int argc, char *argv[]) {
+	CURL *curl;
+	CURLcode res;
+	
+	char *gpmdir = strcat(getpwuid(getuid())->pw_dir, "/.gpm"); /* Get GPM file dir (~/.gpm) */
+	if (strcmp(argv[1], "install") == 0) { /* See if first argument is "install" */
 		for (int a = 2; a < argc; a++) {
-			char *pkg = argv[a]; // argv[a] for later usage
-			printf("\033[0;32mInstalling package %s...\n\033[0m", pkg);
-			// Declare filename here so we don't give fopen the arguments
-			char *file = "%s/pkg/%s.gpm", gpmdir, argv[a];
-			char *pkgfile = fopen(file, "r"); // Open package file in ~/.gpm/pkg/{PACKAGENAME}.gpm
+			curl = curl_easy_init();
+			printf("\033[0;32mInstalling package %s...\n\033[0m", argv[a]);
+			char *pkgURL = malloc(68 + strlen(argv[a]));
+			strcat(pkgURL, "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/");
+			strcat(pkgURL, argv[a]);
+			strcat(pkgURL, ".gpm");
+			if (curl) {
+				curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0");
+				curl_easy_setopt(curl, CURLOPT_URL, pkgURL);
+				res = curl_easy_perform(curl);
+			}
+			free(pkgURL);
 		}
 	}
 	else {
