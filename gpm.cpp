@@ -11,14 +11,16 @@
  ––––––––––––––––––––––
 */
 
+#include <pwd.h>
+#include <fstream>
 #include <iostream>
-#include <cstdio>
 #include "curl/curl.h"
 #include "rapidjson/document.h"
 
-std::string returnedText;
-std::string currentArg;
 std::string pkgURL;
+std::string currentArg;
+std::string returnedText;
+std::string gpmdir = getenv("HOME");
 
 /* By "heikaman" from http://ubuntuforums.org/archive/index.php/t-1435926.html */
 size_t curl_write(void *ptr, size_t size, size_t nmemb, void *stream) {
@@ -27,6 +29,7 @@ size_t curl_write(void *ptr, size_t size, size_t nmemb, void *stream) {
 }
 
 int main(int argc, const char *argv[]) {
+	gpmdir.append("/.gpm");
 	CURL *curl = curl_easy_init();
 	std::string arg = argv[0];
 	std::string initialArg = argv[1];
@@ -41,11 +44,16 @@ int main(int argc, const char *argv[]) {
 			if (returnedText == "Not Found") {
 				std::cout << "\033[00;31mThe package \"" << currentArg << "\" was not found.\033[0m\n";
 			} else {
-				//std::cout << returnedText;
 				rapidjson::Document file;
 				file.Parse(returnedText.c_str());
 				rapidjson::Value &url = file["url"];
-				std::cout << url.GetString();
+				//std::cout << url.GetString();
+				returnedText = "";
+				curl_easy_setopt(curl, CURLOPT_URL, url.GetString()); 
+				curl_easy_perform(curl);
+				std::ofstream dl;
+				dl.open(gpmdir + "/tmp/" + currentArg);
+				dl << returnedText;
 			}
 			returnedText = "";
 		}
