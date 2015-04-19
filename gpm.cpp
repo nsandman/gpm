@@ -10,8 +10,11 @@
 |    by Noah Sandman   |
  ––––––––––––––––––––––
 */
+
 #include <iostream>
-#include <curl/curl.h>
+#include <cstdio>
+#include "curl/curl.h"
+#include "rapidjson/document.h"
 
 std::string returnedText;
 std::string currentArg;
@@ -38,7 +41,11 @@ int main(int argc, const char *argv[]) {
 			if (returnedText == "Not Found") {
 				std::cout << "\033[00;31mThe package \"" << currentArg << "\" was not found.\033[0m\n";
 			} else {
-				std::cout << returnedText;
+				//std::cout << returnedText;
+				rapidjson::Document file;
+				file.Parse(returnedText.c_str());
+				rapidjson::Value &url = file["url"];
+				std::cout << url.GetString();
 			}
 			returnedText = "";
 		}
