@@ -4,15 +4,15 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 
 1. Packages are JSON files with one URL and bash commands, not Ruby scripts with methods.
 2. Packages are stored on a [server](http://github.com/nsandman09/gpm-packages), and you do **not** have to fork it to add custom packages.
-3. GPM is written in Python, not Ruby, and is significantly smaller.
+3. GPM is written in C++, not Ruby.
 4. GPM modifies your $PATH variable instead of symlinking all installs.
 5. Oh yeah, and it's cross-platform.
 
 ##Installation
-Installation is easy. Just run:
+An install script will be available when GPM is in usable condition. If you want to see how it works, I compile it with this command:
 
 ```bash
-curl -s http://pastebin.com/raw.php?i=njyLkDFY | perl
+g++ gpm.cpp -lcurl -o gpm
 ```
 
 Then, to add GPM to your path, restart or run:
@@ -140,7 +140,7 @@ It looks like a lot, but don't be daunted. Remove all the "echo" commands and it
 	]
 }
 ```
-Okay, that's easier to read. Now let's look at this. It downloads the latest node version from http://www.semver.io. This is in the "url" field. So everywhere it says \`cat {FILENAME}`, it's just putting the latest node.js version. So, assuming that's **0.12.2**, this will show up as:
+Okay, that's easier to read. Now let's look at this. It downloads the latest node version from http://www.semver.io. This is in the "url" field. So everywhere it says \`cat {FILENAME}`, it's just putting the latest node.js version. So, assuming that's **0.12.2**, this will sbe read as:
 
 ```json
 {

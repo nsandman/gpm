@@ -47,13 +47,13 @@ int main(int argc, const char *argv[]) {
 				rapidjson::Document file;
 				file.Parse(returnedText.c_str());
 				rapidjson::Value &url = file["url"];
-				//std::cout << url.GetString();
 				returnedText = "";
 				curl_easy_setopt(curl, CURLOPT_URL, url.GetString()); 
 				curl_easy_perform(curl);
 				std::ofstream dl;
 				dl.open(gpmdir + "/tmp/" + currentArg);
 				dl << returnedText;
+				dl.close();
 			}
 			returnedText = "";
 		}
