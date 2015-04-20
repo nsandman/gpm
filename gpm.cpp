@@ -12,7 +12,6 @@
 */
 
 #include <pwd.h>
-#include <regex>
 #include <fstream>
 #include <iostream>
 #include "curl/curl.h"
@@ -28,6 +27,22 @@ std::string gpmdir = getenv("HOME");
 size_t curl_write(void *ptr, size_t size, size_t nmemb, void *stream) {
 	returnedText.append((char*)ptr);
 	return size*nmemb;
+}
+
+/* By James Kanze from http://stackoverflow.com/questions/20406744 */
+std::string replaceAll(std::string const& original, std::string const& from, std::string const& to) {
+    std::string results;
+    std::string::const_iterator end = original.end();
+    std::string::const_iterator current = original.begin();
+    std::string::const_iterator next = std::search( current, end, from.begin(), from.end() );
+    while ( next != end ) {
+        results.append( current, next );
+        results.append( to );
+        current = next + from.size();
+        next = std::search( current, end, from.begin(), from.end() );
+    }
+    results.append( current, next );
+    return results;
 }
 
 int main(int argc, const char *argv[]) {
@@ -60,9 +75,9 @@ int main(int argc, const char *argv[]) {
 				dl.close();
 				for (int b = 0; b < cmds.Size(); b++) {
 					currentCommand = cmds[b].GetString();
-					std::regex fn ("%FILENAME");
-					std::cout << std::regex_replace(currentCommand, fn, cfile);
-					//std::cout << currentCommand;
+					currentCommand = replaceAll(currentCommand, "{FILENAME}", cfile);
+					currentCommand = replaceAll(currentCommand, "{GPMDIR}", gpmdir);
+					system(currentCommand);
 				}
 			}
 			returnedText = "";

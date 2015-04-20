@@ -1,3 +1,6 @@
+#Don't commit built binaries
 gpm
+
+#And weird Mac-specific files
 .DS_Store
 */.DS_Store
