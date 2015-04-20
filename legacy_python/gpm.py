@@ -17,7 +17,7 @@ def install(install):
 	if install[0] == 'install' or install[0] == 'i':
 		for a in range(1, len(install)):
 			found = False
-			v = open(gpmdir + '/installed/_installed.gpm', 'r')
+			v = open(gpmdir + '/installed/_installed.gpi', 'r')
 			lines = v.readlines()
 			for line in lines:
 				if line == install[a] + '\n':
@@ -41,7 +41,7 @@ def install(install):
 						call(g[y].format(FILENAME=p, GPMDIR=gpmdir), shell=True)
 					m.close()
 					copy(p, gpmdir + '/installed/')
-					v = open(gpmdir + '/installed/_installed.gpm', 'a')
+					v = open(gpmdir + '/installed/_installed.gpi', 'a')
 					v.write(install[a] + "\n")
 					v.close()
 					e = gpmdir + '/tmp/'
@@ -55,10 +55,10 @@ def install(install):
 		for a in range(1, len(install)):
 			try:
 				remove(gpmdir + '/installed/' + install[a])
-				v = open(gpmdir + '/installed/_installed.gpm', 'r')
+				v = open(gpmdir + '/installed/_installed.gpi', 'r')
 				lines = v.readlines()
 				v.close()
-				v = open(gpmdir + '/installed/_installed.gpm', 'w')
+				v = open(gpmdir + '/installed/_installed.gpi', 'w')
 				for line in lines:
 					if line != install[a] + '\n':
 						v.write(line)
@@ -70,7 +70,7 @@ def install(install):
 	elif install[0] == 'check':
 		for a in range(1, len(install)):
 			found = False
-			v = open(gpmdir + '/installed/_installed.gpm', 'r')
+			v = open(gpmdir + '/installed/_installed.gpi', 'r')
 			lines = v.readlines()
 			for line in lines:
 				if line == install[a] + '\n':
@@ -80,7 +80,7 @@ def install(install):
 			else:
 				click.echo('\033[0;31mPackage "%s" is not installed.\033[0m' % install[a])
 	elif install[0] == 'list' or install[0] == 'l' or install[0] == 'installed':
-		v = open(gpmdir + '/installed/_installed.gpm', 'r')
+		v = open(gpmdir + '/installed/_installed.gpi', 'r')
 		click.echo('\033[1;30mINSTALLED PACKAGES')
 		click.echo('==================\033[0m')
 		click.echo(v.read())
