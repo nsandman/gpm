@@ -37,6 +37,7 @@ def install(install):
 						urllib.request.urlretrieve(f['url'], p) 
 					g = f['commands']
 					for y in range(len(g)):
+						print g[y].format(FILENAME=p, GPMDIR=gpmdir)
 						call(g[y].format(FILENAME=p, GPMDIR=gpmdir), shell=True)
 					m.close()
 					copy(p, gpmdir + '/installed/')
