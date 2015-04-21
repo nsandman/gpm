@@ -32,17 +32,19 @@ void print(char *toPrint) {
 
 int main(int argc, char *argv[]) {
 	CURL *curl = curl_easy_init();
-	char *data = malloc(BUFFER_SIZE);
 	char *initialArg = argv[1];
 	/* "falconindy" */
+	char *data = malloc(BUFFER_SIZE);
 	struct write_result write_result = {
 		.data = data,
 		.pos = 0
 	};
 	/* end */
+	char *z;
 	if (strcmp(initialArg, "install") == 0 || strcmp(initialArg, "i") == 0) {
 		cJSON *parsedFile;
 		for (int a = 2; a < argc; a++) {
+			int y = strlen(data);
 			char *currentArg = argv[a];
 			printf("\033[0;32mPackage \"");
 			printf(currentArg);
@@ -55,19 +57,21 @@ int main(int argc, char *argv[]) {
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &write_result);
 			curl_easy_perform(curl);
-			parsedFile = cJSON_Parse(data);
+			z = data;
+			z += y;
+			parsedFile = cJSON_Parse(z);
 			char *rawUrl = cJSON_Print(cJSON_GetObjectItem(parsedFile, "url"));
 			rawUrl++; /* Remove 1st character (a ") */
 			rawUrl[strlen(rawUrl) - 1] = NULL; /* Remove last character (also a ") */
 			print(rawUrl);
+			free(pkgUrl);
+			cJSON_Delete(parsedFile);
 		}
 	} else {
 		printf("\033[0;31mUnknown paramter \"%s\"!\033[0m\n", initialArg);
 	}
 	/* Clean up */
-	//free(pkgUrl);
 	free(data);
-	//cJSON_Delete(parsedFile);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
 	return 0;
