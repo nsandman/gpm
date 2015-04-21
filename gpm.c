@@ -6,7 +6,7 @@
 #include "curl/curl.h"
 
 /* By "falconindy" from http://ubuntuforums.org/archive/index.php/t-1435926.html */
-#define BUFFER_SIZE (256 * 1024) /* 256kB */
+#define BUFFER_SIZE (256 * 1024)
 
 struct write_result {
 	char *data;
@@ -19,8 +19,10 @@ static size_t curl_write(void *ptr, size_t size, size_t nmemb, void *stream) {
 		fprintf(stderr, "curl error: too small buffer\n");
 		return 0;
 	}
-	memcpy(result->data + result->pos, ptr, size * nmemb);
-	result->pos += size * nmemb;
+	for (int g = 0; g < size * nmeb / BUFFER_SIZE; g += size * nmeb) {
+		memcpy(result->data + result->pos, ptr, size * nmemb);
+		result->pos += size * nmemb;
+	}
 	return size * nmemb;
 } 
 /* End code by "falconindy" */
@@ -32,6 +34,7 @@ void print(char *toPrint) {
 
 int main(int argc, char *argv[]) {
 	CURL *curl = curl_easy_init();
+	char *gpmdir = strcat(getenv("HOME"), "/.gpm");
 	char *initialArg = argv[1];
 	/* "falconindy" */
 	char *data = malloc(BUFFER_SIZE);
@@ -41,10 +44,11 @@ int main(int argc, char *argv[]) {
 	};
 	/* end */
 	char *z;
+	int y = 0;
 	if (strcmp(initialArg, "install") == 0 || strcmp(initialArg, "i") == 0) {
 		cJSON *parsedFile;
 		for (int a = 2; a < argc; a++) {
-			int y = strlen(data);
+			y = strlen(data);
 			char *currentArg = argv[a];
 			printf("\033[0;32mPackage \"");
 			printf(currentArg);
@@ -53,7 +57,7 @@ int main(int argc, char *argv[]) {
 			strcat(pkgUrl, "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/");
 			strcat(pkgUrl, currentArg);
 			strcat(pkgUrl, ".gpm");
-			curl_easy_setopt(curl, CURLOPT_URL, pkgUrl); 
+			curl_easy_setopt(curl, CURLOPT_URL, pkgUrl);
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &write_result);
 			curl_easy_perform(curl);
@@ -63,8 +67,19 @@ int main(int argc, char *argv[]) {
 			char *rawUrl = cJSON_Print(cJSON_GetObjectItem(parsedFile, "url"));
 			rawUrl++; /* Remove 1st character (a ") */
 			rawUrl[strlen(rawUrl) - 1] = NULL; /* Remove last character (also a ") */
-			print(rawUrl);
+			y = strlen(data);
 			free(pkgUrl);
+			curl_easy_setopt(curl, CURLOPT_URL, rawUrl);
+			curl_easy_perform(curl);
+			z = data;
+			z += y;
+			char *filename = malloc(sizeof(gpmdir) + 5 + sizeof(currentArg));
+			strcat(filename, gpmdir);
+			strcat(filename, "/tmp/");
+			strcat(filename, currentArg);
+			FILE *dlFile = fopen(filename, "w");
+			fprintf(dlFile, z);
+			fclose(dlFile);
 			cJSON_Delete(parsedFile);
 		}
 	} else {
