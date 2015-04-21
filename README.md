@@ -3,8 +3,8 @@
 This is a lightweight package manager designed to be easy to use and easy to make packages for. It is inspired by Homebrew, but is different in many regards:
 
 1. Packages are JSON files with one URL and bash commands, not Ruby scripts with methods.
-2. Packages are stored on a [server](http://github.com/nsandman09/gpm-packages), and you do **not** have to fork it to add custom packages.
-3. GPM is written in C++, not Ruby.
+2. Packages are stored on a [server](http://github.com/nsandman09/gpm-packages), so you do **not** have to fork it to add custom packages.
+3. GPM is written in C, not Ruby.
 4. GPM modifies your $PATH variable instead of symlinking all installs.
 5. Oh yeah, and it's cross-platform.
 
@@ -12,8 +12,10 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 An install script will be available when GPM is in usable condition. If you want to see how it works, I compile it with this command:
 
 ```bash
-g++ gpm.cpp -lcurl -o gpm
+gcc gpm.c cjson.c -lcurl -w -o gpm
 ```
+
+Using GCC 4.9 installed with Homebrew. It will probably work with clang, too, but the performance of the generated code with GCC is a tiny bit better.
 
 Then, to add GPM to your path, restart or run:
 
@@ -29,15 +31,6 @@ GPM creates a folder in your home directory called .gpm. This is its structure:
  +-- installed
  |   +-- _installed.gpm
  |   +-- gpm
- +-- pkg
- |   +-- _templates
- |   |   +-- shell_temlate.gpm
- |   |   +-- compiled_template.gpm
- |   +-- node.gpm
- |   +-- composer.gpm
- +-- scripts
- |   +-- update_pkg.pl
- |   +-- update.pl
  +-- tmp
 ```
 The "installed" folder is the actual directory that gets added to your PATH. All packages installed by GPM go here, as well as GPM itself.
