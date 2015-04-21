@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
 	};
 	/* end */
 	if (strcmp(initialArg, "install") == 0 || strcmp(initialArg, "i") == 0) {
+		cJSON *parsedFile;
 		for (int a = 2; a < argc; a++) {
 			char *currentArg = argv[a];
 			printf("\033[0;32mPackage \"");
@@ -54,10 +55,20 @@ int main(int argc, char *argv[]) {
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curl_write);
 			curl_easy_setopt(curl, CURLOPT_WRITEDATA, &write_result);
 			curl_easy_perform(curl);
-			print(data);
+			parsedFile = cJSON_Parse(data);
+			char *rawUrl = cJSON_Print(cJSON_GetObjectItem(parsedFile, "url"));
+			rawUrl++; /* Remove 1st character (a ") */
+			rawUrl[strlen(rawUrl) - 1] = NULL; /* Remove last character (also a ") */
+			print(rawUrl);
 		}
 	} else {
 		printf("\033[0;31mUnknown paramter \"%s\"!\033[0m\n", initialArg);
 	}
+	/* Clean up */
+	//free(pkgUrl);
+	free(data);
+	//cJSON_Delete(parsedFile);
+	curl_easy_cleanup(curl);
+	curl_global_cleanup();
 	return 0;
 }
