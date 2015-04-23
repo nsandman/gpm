@@ -3,7 +3,7 @@
 #include <string.h>
 
 #include "gpm.h"
-//#include "cjson.h"
+#include "cjson/cjson.h"
 #include "curl/curl.h"
 
 struct fp {
@@ -11,9 +11,8 @@ struct fp {
 
 int main(int argc, char *argv[]) {
 	char *initArg = argv[1];
+	CURL *curl = curl_easy_init();
 	if (strcmp(initArg, "install") == 0 || strcmp(initArg, "i") == 0) {
-		char curlData = "";
-		CURL *curl = curl_easy_init();
 		for (int args = 2; args < argc; args++) {
 			char *cArg = argv[args];
 			char *ghUrl = malloc(68 + sizeof(cArg));
@@ -24,13 +23,15 @@ int main(int argc, char *argv[]) {
 			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
 			curl_easy_perform(curl);
 			if (strcmp(curlResponse, "Not Found") != 0) {
-				printf("Package \"%s\" found, installing...\n", cArg);
+				printf("\033[0;32mPackage \"%s\" found, installing...\033[0m\n", cArg);
 			} else {
-				printf("Package \"%s\" not found, skipping...\n", cArg);
+				printf("\033[0;31mPackage \"%s\" not found, skipping...\033[0m\n", cArg);
 			}
 		}
 	} else {
-		fprintf(stderr, "Unknown paramter \"%s\"!\n", initArg);
+		fprintf(stderr, "\033[0;31mUnknown paramter \"%s\"!\033[0m\n", initArg);
 	}
+	curl_easy_cleanup(curl);
+	curl_global_cleanup();
 	return 0;
 }
