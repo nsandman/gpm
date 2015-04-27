@@ -4,8 +4,6 @@
 # This script was extracted #
 # from the old GPM (Python) # 
 # -Noah                     #
-from sys import argv
-
 def delete_gpi(a, b):
 	# Open file with read access only
 	v = open(a, 'r')
