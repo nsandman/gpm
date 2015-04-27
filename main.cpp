@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
 	CURL *curl = curl_easy_init();
 	/* Use callback to save cURL output to variable */
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, nFunctions::curlToVar);
+	curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2366.0 Safari/537.36");
 	if (argc > 1) {
 		char *argOne = argv[1];
 		const char *iDir = string(GPMDIR + "/installed/_installed.gpi").c_str();
@@ -89,8 +90,20 @@ int main(int argc, char *argv[]) {
 					if (strcmp(line2.c_str(), currentArg) == 0) {
 						cout << "\033[0;32mPackage \"" << currentArg << "\" found, removing...\033[0m\n";
 						remove((GPMDIR + "/installed/" + currentArg).c_str());
-						pyembed::Python toDelete(argc, argv);
-						toDelete.run_file("rmfgpi.py");
+						try {
+							pyembed::Python toDelete(0, argv); /* New Python interpreter */
+							long returned = 0; /* Variable returned value is saved to */
+							pyembed::Arg_map args; /* "Argmap" to give to function */
+							/* Add three values to Argmap */
+							args[string(GPMDIR + "/installed/_installed.gpi").c_str()] = pyembed::Py_string; /* to_open */
+							args["2"] = pyembed::Py_long; /* which_run */
+							args[currentArg] = pyembed::Py_string; /* look_for */
+							toDelete.load("rmfgpi"); /* Load rmfgpi script ("module") */
+							/* Call function delete_gpi with args from argmap and save to "returned" */
+							toDelete.call("delete_gpi", args, returned);
+						} catch (pyembed::Python_exception ex) {
+							cerr << ex.what() << endl; /* Any errors to stderr */
+						}
 						foundToRem = true;
 						break;
 					}

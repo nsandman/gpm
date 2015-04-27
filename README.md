@@ -12,7 +12,7 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 An install script will be available when GPM is in usable condition. If you want to see how it works, I compile it with this command:
 
 ```bash
-g++-4.9 main.cpp pyembed/pyembed.cpp -lpython2.7 -lcurl -o gpm
+g++ main.cpp pyembed/pyembed.cpp -lpython2.7 -lcurl -o gpm
 ```
 
 Then, to add GPM to your path, restart or run:
