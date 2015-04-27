@@ -7,6 +7,7 @@
 #include <curl/curl.h>
 
 #include "main.h"
+#include "pyembed/pyembed.h"
 #include "rapidjson/document.h"
 using namespace std;
 
@@ -49,10 +50,10 @@ int main(int argc, char *argv[]) {
 						curl_easy_setopt(curl, CURLOPT_URL, url.GetString());
 						curl_easy_perform(curl);
 						ofstream downloadFile;
-			  			downloadFile.open(cFile.c_str());
-			  			downloadFile << curlResult;
-			  			downloadFile.close();
-			  			for (int b = 0; b < cmd.Size(); b++) {
+						downloadFile.open(cFile.c_str());
+						downloadFile << curlResult;
+						downloadFile.close();
+						for (int b = 0; b < cmd.Size(); b++) {
 							string currentCommand(cmd[b].GetString());
 							/* Replace the variables */
 							currentCommand = nFunctions::replaceAll(currentCommand, string("{FILENAME}"), cFile);
@@ -88,10 +89,13 @@ int main(int argc, char *argv[]) {
 					if (strcmp(line2.c_str(), currentArg) == 0) {
 						cout << "\033[0;32mPackage \"" << currentArg << "\" found, removing...\033[0m\n";
 						remove((GPMDIR + "/installed/" + currentArg).c_str());
+						pyembed::Python py(argc, argv);
+						py.run_file("rmfgpi.py");
 						foundToRem = true;
 						break;
 					}
 				}
+				installed.close();
 				if (!foundToRem) {
 					cout << "\033[0;31mPackage \"" << currentArg << "\" not found, skipping...\033[0m\n";
 				}
@@ -106,12 +110,15 @@ int main(int argc, char *argv[]) {
 				iOutput.append(cLine + "\n");
 			}
 			cout << "\033[1;30mINSTALLED PACKAGES\n==================\033[0m\n" << iOutput << endl;
+			exit(0); /* Prevent "Done." from being printed */
 		}
 		else {
 			cout << "\033[0;31mUnknown param " << argOne << "!\033[0m\n";
+			exit(0);
 		}
 	} else {
 		cout << "\033[0;31mNo params given!\033[0m\n";
+		exit(0);
 	}
 	cout << "Done.\n";
 	return 0;
