@@ -4,6 +4,7 @@
  * Copyright (C) 2006 Mindteck.
  * @author Vijay Mathew Pandyalakal
  * @date 08 May, 2006
+ * Modified on 04/26/2015 by Noah Sandman 
  */
 
 #ifndef PYEMBED_H
@@ -15,7 +16,7 @@
 #include <exception>
 
 #ifdef __APPLE__
-  #include <Python/Python.h>
+  #include <Python/Python.h> /* Changed by Noah: On OSX, Python is a framework, so... */
 #else
   #include <Python.h>
 #endif

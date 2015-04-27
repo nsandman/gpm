@@ -89,8 +89,8 @@ int main(int argc, char *argv[]) {
 					if (strcmp(line2.c_str(), currentArg) == 0) {
 						cout << "\033[0;32mPackage \"" << currentArg << "\" found, removing...\033[0m\n";
 						remove((GPMDIR + "/installed/" + currentArg).c_str());
-						pyembed::Python py(argc, argv);
-						py.run_file("rmfgpi.py");
+						pyembed::Python toDelete(argc, argv);
+						toDelete.run_file("rmfgpi.py");
 						foundToRem = true;
 						break;
 					}
