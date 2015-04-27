@@ -96,7 +96,6 @@ int main(int argc, char *argv[]) {
 							pyembed::Arg_map args; /* "Argmap" to give to function */
 							/* Add three values to Argmap */
 							args[string(GPMDIR + "/installed/_installed.gpi").c_str()] = pyembed::Py_string; /* to_open */
-							args["2"] = pyembed::Py_long; /* which_run */
 							args[currentArg] = pyembed::Py_string; /* look_for */
 							toDelete.load("rmfgpi"); /* Load rmfgpi script ("module") */
 							/* Call function delete_gpi with args from argmap and save to "returned" */
