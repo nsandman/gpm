@@ -4,7 +4,7 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 
 1. Packages are JSON files with one URL and bash commands, not Ruby scripts with methods.
 2. Packages are stored on a [server](http://github.com/nsandman09/gpm-packages), and you do **not** have to fork it to add custom packages.
-3. GPM is written in C, C++, and Python, not Ruby.
+3. GPM is written in C, not Ruby.
 4. GPM modifies your $PATH variable instead of symlinking all installs.
 5. Oh yeah, and it's cross-platform.
 
@@ -12,7 +12,7 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 An install script will be available when GPM is in usable condition. If you want to see how it works, I compile it with this command:
 
 ```bash
-g++ main.cpp pyembed/pyembed.cpp -lpython2.7 -lcurl -o gpm
+gcc main.c -lcurl -o gpm
 ```
 
 Then, to add GPM to your path, restart or run:
