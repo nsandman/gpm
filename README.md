@@ -12,7 +12,7 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 An install script will be available when GPM is in usable condition. If you want to see how it works, I compile it with this command:
 
 ```bash
-gcc main.c -lcurl -o gpm
+gcc main.c json.c -std=c1x -lcurl -o gpm
 ```
 
 Then, to add GPM to your path, restart or run:
