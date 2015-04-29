@@ -15,6 +15,9 @@ int main(int argc, char *argv[]) {
 				curl_easy_setopt(curl, CURLOPT_URL, dlUrl);
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
 				curl_easy_perform(curl);
+				cJSON *jCurlParse = cJSON_Parse(curlResult);
+				cJSON *testing = cJSON_GetObjectItem(jCurlParse,"url");
+				printf("%s\n", cJSON_Print(testing));
 			}
 		} else {
 			printf("Unknown param \"%s\"!\n", (char*)argv[1]);

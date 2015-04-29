@@ -1,283 +1,143 @@
+/*
+  Copyright (c) 2009 Dave Gamble
+ 
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+ 
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+ 
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+*/
 
-/* vim: set et ts=3 sw=3 sts=3 ft=c:
- *
- * Copyright (C) 2012, 2013, 2014 James McLaughlin et al.  All rights reserved.
- * https://github.com/udp/json-parser
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *   notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *   notice, this list of conditions and the following disclaimer in the
- *   documentation and/or other materials provided with the distribution.
- *
- * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- */
-
-#ifndef _JSON_H
-#define _JSON_H
-
-#ifndef json_char
-   #define json_char char
-#endif
-
-#ifndef json_int_t
-   #ifndef _MSC_VER
-      #include <inttypes.h>
-      #define json_int_t int64_t
-   #else
-      #define json_int_t __int64
-   #endif
-#endif
-
-#include <stdlib.h>
+#ifndef cJSON__h
+#define cJSON__h
 
 #ifdef __cplusplus
-
-   #include <string.h>
-
-   extern "C"
-   {
-
+extern "C"
+{
 #endif
 
-typedef struct
-{
-   unsigned long max_memory;
-   int settings;
+/* cJSON Types: */
+#define cJSON_False 0
+#define cJSON_True 1
+#define cJSON_NULL 2
+#define cJSON_Number 3
+#define cJSON_String 4
+#define cJSON_Array 5
+#define cJSON_Object 6
+	
+#define cJSON_IsReference 256
 
-   /* Custom allocator support (leave null to use malloc/free)
-    */
+/* The cJSON structure: */
+typedef struct cJSON {
+	struct cJSON *next,*prev;	/* next/prev allow you to walk array/object chains. Alternatively, use GetArraySize/GetArrayItem/GetObjectItem */
+	struct cJSON *child;		/* An array or object item will have a child pointer pointing to a chain of the items in the array/object. */
 
-   void * (* mem_alloc) (size_t, int zero, void * user_data);
-   void (* mem_free) (void *, void * user_data);
+	int type;					/* The type of the item, as above. */
 
-   void * user_data;  /* will be passed to mem_alloc and mem_free */
+	char *valuestring;			/* The item's string, if type==cJSON_String */
+	int valueint;				/* The item's number, if type==cJSON_Number */
+	double valuedouble;			/* The item's number, if type==cJSON_Number */
 
-   size_t value_extra;  /* how much extra space to allocate for values? */
+	char *string;				/* The item's name string, if this item is the child of, or is in the list of subitems of an object. */
+} cJSON;
 
-} json_settings;
+typedef struct cJSON_Hooks {
+      void *(*malloc_fn)(size_t sz);
+      void (*free_fn)(void *ptr);
+} cJSON_Hooks;
 
-#define json_enable_comments  0x01
-
-typedef enum
-{
-   json_none,
-   json_object,
-   json_array,
-   json_integer,
-   json_double,
-   json_string,
-   json_boolean,
-   json_null
-
-} json_type;
-
-extern const struct _json_value json_value_none;
-       
-typedef struct _json_object_entry
-{
-    json_char * name;
-    unsigned int name_length;
-    
-    struct _json_value * value;
-    
-} json_object_entry;
-
-typedef struct _json_value
-{
-   struct _json_value * parent;
-
-   json_type type;
-
-   union
-   {
-      int boolean;
-      json_int_t integer;
-      double dbl;
-
-      struct
-      {
-         unsigned int length;
-         json_char * ptr; /* null terminated */
-
-      } string;
-
-      struct
-      {
-         unsigned int length;
-
-         json_object_entry * values;
-
-         #if defined(__cplusplus) && __cplusplus >= 201103L
-         decltype(values) begin () const
-         {  return values;
-         }
-         decltype(values) end () const
-         {  return values + length;
-         }
-         #endif
-
-      } object;
-
-      struct
-      {
-         unsigned int length;
-         struct _json_value ** values;
-
-         #if defined(__cplusplus) && __cplusplus >= 201103L
-         decltype(values) begin () const
-         {  return values;
-         }
-         decltype(values) end () const
-         {  return values + length;
-         }
-         #endif
-
-      } array;
-
-   } u;
-
-   union
-   {
-      struct _json_value * next_alloc;
-      void * object_mem;
-
-   } _reserved;
-
-   #ifdef JSON_TRACK_SOURCE
-
-      /* Location of the value in the source JSON
-       */
-      unsigned int line, col;
-
-   #endif
+/* Supply malloc, realloc and free functions to cJSON */
+extern void cJSON_InitHooks(cJSON_Hooks* hooks);
 
 
-   /* Some C++ operator sugar */
+/* Supply a block of JSON, and this returns a cJSON object you can interrogate. Call cJSON_Delete when finished. */
+extern cJSON *cJSON_Parse(const char *value);
+/* Render a cJSON entity to text for transfer/storage. Free the char* when finished. */
+extern char  *cJSON_Print(cJSON *item);
+/* Render a cJSON entity to text for transfer/storage without any formatting. Free the char* when finished. */
+extern char  *cJSON_PrintUnformatted(cJSON *item);
+/* Delete a cJSON entity and all subentities. */
+extern void   cJSON_Delete(cJSON *c);
 
-   #ifdef __cplusplus
+/* Returns the number of items in an array (or object). */
+extern int	  cJSON_GetArraySize(cJSON *array);
+/* Retrieve item number "item" from array "array". Returns NULL if unsuccessful. */
+extern cJSON *cJSON_GetArrayItem(cJSON *array,int item);
+/* Get item "string" from object. Case insensitive. */
+extern cJSON *cJSON_GetObjectItem(cJSON *object,const char *string);
 
-      public:
+/* For analysing failed parses. This returns a pointer to the parse error. You'll probably need to look a few chars back to make sense of it. Defined when cJSON_Parse() returns 0. 0 when cJSON_Parse() succeeds. */
+extern const char *cJSON_GetErrorPtr(void);
+	
+/* These calls create a cJSON item of the appropriate type. */
+extern cJSON *cJSON_CreateNull(void);
+extern cJSON *cJSON_CreateTrue(void);
+extern cJSON *cJSON_CreateFalse(void);
+extern cJSON *cJSON_CreateBool(int b);
+extern cJSON *cJSON_CreateNumber(double num);
+extern cJSON *cJSON_CreateString(const char *string);
+extern cJSON *cJSON_CreateArray(void);
+extern cJSON *cJSON_CreateObject(void);
 
-         inline _json_value ()
-         {  memset (this, 0, sizeof (_json_value));
-         }
+/* These utilities create an Array of count items. */
+extern cJSON *cJSON_CreateIntArray(const int *numbers,int count);
+extern cJSON *cJSON_CreateFloatArray(const float *numbers,int count);
+extern cJSON *cJSON_CreateDoubleArray(const double *numbers,int count);
+extern cJSON *cJSON_CreateStringArray(const char **strings,int count);
 
-         inline const struct _json_value &operator [] (int index) const
-         {
-            if (type != json_array || index < 0
-                     || ((unsigned int) index) >= u.array.length)
-            {
-               return json_value_none;
-            }
+/* Append item to the specified array/object. */
+extern void cJSON_AddItemToArray(cJSON *array, cJSON *item);
+extern void	cJSON_AddItemToObject(cJSON *object,const char *string,cJSON *item);
+/* Append reference to item to the specified array/object. Use this when you want to add an existing cJSON to a new cJSON, but don't want to corrupt your existing cJSON. */
+extern void cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item);
+extern void	cJSON_AddItemReferenceToObject(cJSON *object,const char *string,cJSON *item);
 
-            return *u.array.values [index];
-         }
+/* Remove/Detatch items from Arrays/Objects. */
+extern cJSON *cJSON_DetachItemFromArray(cJSON *array,int which);
+extern void   cJSON_DeleteItemFromArray(cJSON *array,int which);
+extern cJSON *cJSON_DetachItemFromObject(cJSON *object,const char *string);
+extern void   cJSON_DeleteItemFromObject(cJSON *object,const char *string);
+	
+/* Update array items. */
+extern void cJSON_ReplaceItemInArray(cJSON *array,int which,cJSON *newitem);
+extern void cJSON_ReplaceItemInObject(cJSON *object,const char *string,cJSON *newitem);
 
-         inline const struct _json_value &operator [] (const char * index) const
-         { 
-            if (type != json_object)
-               return json_value_none;
+/* Duplicate a cJSON item */
+extern cJSON *cJSON_Duplicate(cJSON *item,int recurse);
+/* Duplicate will create a new, identical cJSON item to the one you pass, in new memory that will
+need to be released. With recurse!=0, it will duplicate any children connected to the item.
+The item->next and ->prev pointers are always zero on return from Duplicate. */
 
-            for (unsigned int i = 0; i < u.object.length; ++ i)
-               if (!strcmp (u.object.values [i].name, index))
-                  return *u.object.values [i].value;
+/* ParseWithOpts allows you to require (and check) that the JSON is null terminated, and to retrieve the pointer to the final byte parsed. */
+extern cJSON *cJSON_ParseWithOpts(const char *value,const char **return_parse_end,int require_null_terminated);
 
-            return json_value_none;
-         }
+extern void cJSON_Minify(char *json);
 
-         inline operator const char * () const
-         {  
-            switch (type)
-            {
-               case json_string:
-                  return u.string.ptr;
+/* Macros for creating things quickly. */
+#define cJSON_AddNullToObject(object,name)		cJSON_AddItemToObject(object, name, cJSON_CreateNull())
+#define cJSON_AddTrueToObject(object,name)		cJSON_AddItemToObject(object, name, cJSON_CreateTrue())
+#define cJSON_AddFalseToObject(object,name)		cJSON_AddItemToObject(object, name, cJSON_CreateFalse())
+#define cJSON_AddBoolToObject(object,name,b)	cJSON_AddItemToObject(object, name, cJSON_CreateBool(b))
+#define cJSON_AddNumberToObject(object,name,n)	cJSON_AddItemToObject(object, name, cJSON_CreateNumber(n))
+#define cJSON_AddStringToObject(object,name,s)	cJSON_AddItemToObject(object, name, cJSON_CreateString(s))
 
-               default:
-                  return "";
-            };
-         }
-
-         inline operator json_int_t () const
-         {  
-            switch (type)
-            {
-               case json_integer:
-                  return u.integer;
-
-               case json_double:
-                  return (json_int_t) u.dbl;
-
-               default:
-                  return 0;
-            };
-         }
-
-         inline operator bool () const
-         {  
-            if (type != json_boolean)
-               return false;
-
-            return u.boolean != 0;
-         }
-
-         inline operator double () const
-         {  
-            switch (type)
-            {
-               case json_integer:
-                  return (double) u.integer;
-
-               case json_double:
-                  return u.dbl;
-
-               default:
-                  return 0;
-            };
-         }
-
-   #endif
-
-} json_value;
-       
-json_value * json_parse (const json_char * json,
-                         size_t length);
-
-#define json_error_max 128
-json_value * json_parse_ex (json_settings * settings,
-                            const json_char * json,
-                            size_t length,
-                            char * error);
-
-void json_value_free (json_value *);
-
-
-/* Not usually necessary, unless you used a custom mem_alloc and now want to
- * use a custom mem_free.
- */
-void json_value_free_ex (json_settings * settings,
-                         json_value *);
-
+/* When assigning an integer value, it needs to be propagated to valuedouble too. */
+#define cJSON_SetIntValue(object,val)			((object)?(object)->valueint=(object)->valuedouble=(val):(val))
 
 #ifdef __cplusplus
-   } /* extern "C" */
+}
 #endif
 
 #endif
-
-
