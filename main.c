@@ -13,13 +13,14 @@ int main(int argc, char *argv[]) {
 				strcat(dlUrl, "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/");
 				strcat(dlUrl, currentArg);
 				strcat(dlUrl, ".gpm");
-				clearVar(curlResult);
+				clearVar(CurlResult, 1);
 				curl_easy_setopt(curl, CURLOPT_URL, dlUrl);
 				curl_easy_perform(curl);
-				jCurlParse = cJSON_Parse(curlResult);
+				printf("%s\n", CurlResult);
+				jCurlParse = cJSON_Parse(CurlResult);
 				cmds = cJSON_GetObjectItem(jCurlParse,"commands");
 				char *urlFromJson = cJSON_Print(cJSON_GetObjectItem(jCurlParse,"url"));
-				clearVar(curlResult);
+				clearVar(CurlResult, 1);
 				curl_easy_setopt(curl, CURLOPT_URL, urlFromJson);
 				curl_easy_perform(curl);
 				for (int b = 0; b < cJSON_GetArraySize(cmds); b++) {
@@ -38,5 +39,6 @@ int main(int argc, char *argv[]) {
 	cJSON_Delete(jCurlParse);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
+	free(dlUrl);			/* This is done manually, for some reason */
 	return 0;
 }

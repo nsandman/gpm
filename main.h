@@ -8,42 +8,36 @@
 
 #include "json.h"
 
-/* Blank string for cURL result */
-char *curlResult;
+char *CurlResult;		/* Blank string for cURL result */
 char *currentChunk;
 char *dlUrl;
 cJSON *jCurlParse;
 cJSON *cmds;
 CURL *curl;
-int timesRun; /* How many times have we run the function? */
+int timesRun; 				/* How many times have we run the function? */
 
 size_t curlToVar(void *ptr, size_t size, size_t nmemb, ...) {
-	currentChunk = (char*)ptr; /* Save value of ptr to variable */
-	if (timesRun == 0) {
-		curlResult = currentChunk; /* Avoid corruption if short */
-	} else {
-		if (timesRun == 1) {
-			/* If second run, use malloc() */
-			curlResult = malloc(strlen(currentChunk) + strlen(curlResult));
-		} else {
-			/* Else, use realloc() */
-			curlResult = realloc(curlResult, (strlen(curlResult) + strlen(currentChunk)));
-		}
-		/* Append currentChunk to curlResult (strncat() to avoid weird numbers showing up) */
-		strncat(curlResult, currentChunk, size*nmemb); 
+	currentChunk = malloc(strlen((char*)ptr)); 					/* Save value of ptr to variable */
+	strcpy(currentChunk, (char*)ptr);
+	if (timesRun == 0) {							/* If first time, use malloc() and strcpy() */
+		CurlResult = malloc(strlen(currentChunk));
+		strcpy(CurlResult, currentChunk);
+	} else {																	/* Else, use realloc() and strncat() */
+		CurlResult = realloc(CurlResult, strlen(CurlResult) + strlen(currentChunk));
+		strncat(CurlResult, currentChunk, size*nmemb); 
 	}
-	timesRun++; /* Increment timesRun */
-	return size * nmemb; /* Return bytes left to write (for cURL) */
+	timesRun++;
+	return size * nmemb; 			/* Return bytes left to write (for cURL) */
 }
 
-void clearVar(void *varToClear) {
+void clearVar(void *varToClear, int reset) {
+	if (reset == 1) timesRun = 0;				/* If resetting for cUrl, set timesRun to 0 */	
 	memset(&varToClear, 0, sizeof(varToClear));
 }
 
-void cleanupMain() {
-	/* Free all malloc'd pointers */
-	free(curlResult);
-	free(dlUrl);
+void cleanupMain() {				/* Free all malloc'd pointers */
+	free(currentChunk);
+	free(CurlResult);
 }
 
 #endif
