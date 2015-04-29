@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 
-#include "json-parser/json.h"
+#include "json.h"
 
 /* Blank string for cURL result */
 char *curlResult;
