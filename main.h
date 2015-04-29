@@ -6,11 +6,6 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 
-#ifdef __APPLE__
-#include <Python/Python.h>
-#else 
-#include <Python.h>
-#endif
 #define MAX_L 4096
 
 #include "json.h"
