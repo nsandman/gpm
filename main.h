@@ -1,12 +1,14 @@
-#ifndef _INCLUDED_MAIN
-#define _INCLUDED_MAIN
+#ifndef _INCLUDED_MAIN_H
+#define _INCLUDED_MAIN_H
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <curl/curl.h>
 
-/* Blank string for curlResult */
+#include "json-parser/json.h"
+
+/* Blank string for cURL result */
 char *curlResult;
 int timesRun = 0; /* How many times have we run the function? */
 size_t curlToVar(void *ptr, size_t size, size_t nmemb, ...) {

@@ -15,9 +15,6 @@ int main(int argc, char *argv[]) {
 				curl_easy_setopt(curl, CURLOPT_URL, dlUrl);
 				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
 				curl_easy_perform(curl);
-				curl_easy_cleanup(curl);
-				curl_global_cleanup();
-				printf("%s\n", curlResult);
 			}
 		} else {
 			printf("Unknown param \"%s\"!\n", (char*)argv[1]);
@@ -25,4 +22,7 @@ int main(int argc, char *argv[]) {
 	} else {
 		printf("No params entered!\n");
 	}
+	curl_easy_cleanup(curl);
+	curl_global_cleanup();
+	return 0;
 }
