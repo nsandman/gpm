@@ -2,15 +2,14 @@
 
 int main(int argc, char *argv[]) {
 	const char *gpmdir = strcat(getenv("HOME"), "/.gpm");
-	cJSON *jCurlParse;
-	cJSON *cmds;
-	CURL *curl = curl_easy_init();
+	dlUrl = malloc(1);
+	curl = curl_easy_init();
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
 	if (argc > 1) {
 		if (strcmp((char*)argv[1], "install") == 0 || strcmp((char*)argv[1], "i") == 0) {
 			for (int a = 2; a < argc; a++) {
 				char *currentArg = argv[a];
-				char *dlUrl = malloc(68 + strlen(currentArg));
+				dlUrl = realloc(dlUrl, 68 + strlen(currentArg));
 				strcat(dlUrl, "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/");
 				strcat(dlUrl, currentArg);
 				strcat(dlUrl, ".gpm");
@@ -34,6 +33,8 @@ int main(int argc, char *argv[]) {
 	} else {
 		printf("No params entered!\n");
 	}
+	/* Run function cleanups */
+	cleanupMain();
 	cJSON_Delete(jCurlParse);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();

@@ -10,9 +10,15 @@
 
 /* Blank string for cURL result */
 char *curlResult;
-int timesRun = 0; /* How many times have we run the function? */
+char *currentChunk;
+char *dlUrl;
+cJSON *jCurlParse;
+cJSON *cmds;
+CURL *curl;
+int timesRun; /* How many times have we run the function? */
+
 size_t curlToVar(void *ptr, size_t size, size_t nmemb, ...) {
-	char *currentChunk = (char*)ptr; /* Save value of ptr to variable */
+	currentChunk = (char*)ptr; /* Save value of ptr to variable */
 	if (timesRun == 0) {
 		curlResult = currentChunk; /* Avoid corruption if short */
 	} else {
@@ -32,6 +38,12 @@ size_t curlToVar(void *ptr, size_t size, size_t nmemb, ...) {
 
 void clearVar(void *varToClear) {
 	memset(&varToClear, 0, sizeof(varToClear));
+}
+
+void cleanupMain() {
+	/* Free all malloc'd pointers */
+	free(curlResult);
+	free(dlUrl);
 }
 
 #endif
