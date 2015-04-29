@@ -30,4 +30,8 @@ size_t curlToVar(void *ptr, size_t size, size_t nmemb, ...) {
 	return size * nmemb; /* Return bytes left to write (for cURL) */
 }
 
+void clearVar(void *varToClear) {
+	memset(&varToClear, 0, sizeof(varToClear));
+}
+
 #endif

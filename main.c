@@ -1,8 +1,11 @@
 #include "main.h"
 
 int main(int argc, char *argv[]) {
-	char *GPMDIR = strcat(getenv("HOME"), "/.gpm");
+	const char *gpmdir = strcat(getenv("HOME"), "/.gpm");
+	cJSON *jCurlParse;
+	cJSON *cmds;
 	CURL *curl = curl_easy_init();
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
 	if (argc > 1) {
 		if (strcmp((char*)argv[1], "install") == 0 || strcmp((char*)argv[1], "i") == 0) {
 			for (int a = 2; a < argc; a++) {
@@ -11,13 +14,19 @@ int main(int argc, char *argv[]) {
 				strcat(dlUrl, "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/");
 				strcat(dlUrl, currentArg);
 				strcat(dlUrl, ".gpm");
-				memset(&curlResult, 0, sizeof(curlResult));
+				clearVar(curlResult);
 				curl_easy_setopt(curl, CURLOPT_URL, dlUrl);
-				curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
 				curl_easy_perform(curl);
-				cJSON *jCurlParse = cJSON_Parse(curlResult);
-				cJSON *testing = cJSON_GetObjectItem(jCurlParse,"url");
-				printf("%s\n", cJSON_Print(testing));
+				jCurlParse = cJSON_Parse(curlResult);
+				cmds = cJSON_GetObjectItem(jCurlParse,"commands");
+				char *urlFromJson = cJSON_Print(cJSON_GetObjectItem(jCurlParse,"url"));
+				clearVar(curlResult);
+				curl_easy_setopt(curl, CURLOPT_URL, urlFromJson);
+				curl_easy_perform(curl);
+				for (int b = 0; b < cJSON_GetArraySize(cmds); b++) {
+					printf("%s\n", cJSON_Print(cJSON_GetArrayItem(cmds, b)));
+					/* system(cJSON_Print(cJSON_GetArrayItem(cmds, b))); */
+				}
 			}
 		} else {
 			printf("Unknown param \"%s\"!\n", (char*)argv[1]);
@@ -25,6 +34,7 @@ int main(int argc, char *argv[]) {
 	} else {
 		printf("No params entered!\n");
 	}
+	cJSON_Delete(jCurlParse);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
 	return 0;
