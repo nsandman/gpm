@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 					printf("\033[0;32mPackage \"%s\" found, installing...\033[0m\n", currentArg);
 					jCurlParse = cJSON_Parse(CurlResult);
 					cmds = cJSON_GetObjectItem(jCurlParse,"commands");
-					char *urlFromJson = cJSON_Print(cJSON_GetObjectItem(jCurlParse,"url"));
+					urlFromJson = cJSON_Print(cJSON_GetObjectItem(jCurlParse,"url"));
 					clearVar(CurlResult, 1);
 					curl_easy_setopt(curl, CURLOPT_URL, urlFromJson);
 					curl_easy_perform(curl);
@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
 						system(tmpCmd);
 					}
 				} else {
+					ran = 0;
 					printf("\033[0;31mPackage \"%s\" not found, skipping...\033[0m\n", currentArg);
 				}
 			}
@@ -54,8 +55,6 @@ int main(int argc, char *argv[]) {
 	cJSON_Delete(jCurlParse);
 	curl_easy_cleanup(curl);
 	curl_global_cleanup();
-	free(dlUrl);			/* This must be done manually, for some reason */
-	free(downloadedFileName);
 	printf("Done.\n");
 	return 0;
 }
