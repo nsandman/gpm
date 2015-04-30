@@ -60,7 +60,8 @@ void replaceAll(char *o_string, char *s_string, char *r_string) {
       return replaceAll(o_string, s_string, r_string);
 }
 
-void printHelp() {
+void printHelp(char *em) {
+	if (strcmp(em, "") != 0) printf("%s\n", em);
 	printf("GPM v%s by Noah Sandman\n", GPMVERSION);
 	printf("\033[1;30mABOUT GPM:\033[0m\n");
 	printf("\tGPM is a package manager that uses JSON files with a URL and commands for its package files.\n\n");

@@ -11,15 +11,10 @@ This is a lightweight package manager designed to be easy to use and easy to mak
 ##Installation
 An install script will be available when GPM is in usable condition. If you want to see how it works, I compile it with this command:
 
-```bash
+```
 gcc main.c json.c -std=c1x -lcurl -o gpm
 ```
-
-Then, to add GPM to your path, restart or run:
-
-```bash
-. ~/.profile
-```
+I use Homebrew GCC 4.9 on Mac, but clang will work as well.
 
 ##Behind-the-Scenes Magic
 GPM creates a folder in your home directory called .gpm. This is its structure:
@@ -31,11 +26,7 @@ GPM creates a folder in your home directory called .gpm. This is its structure:
  |   +-- gpm
  +-- tmp
 ```
-The "installed" folder is the actual directory that gets added to your PATH. All packages installed by GPM go here, as well as GPM itself.
-
-Next, all the installer files go in the "pkg" directory. In it there are two templates (also below in the FAQ) for making your own package. Then, there are the actual package files in the root of "pkg".
-
-In "scripts", there are perl scripts to do various things. The names make them fairly self-explanatory. (Coming soon!)
+The "installed" folder is the actual directory that gets added to your PATH. All packages installed by GPM go here.
 
 Finally, there is an empty directory called "tmp". As you can imagine, this is where all the temporary files go when installing a new package.
 
@@ -46,39 +37,30 @@ Using GPM is relatively simple.
 
 ####Installing
 
-```bash
+```
 gpm install [package]
 ```
 
 ####Removing
-```bash
+```
 gpm remove [package]
 ```
 
 ####Check if Package(s) Installed
-```bash
+```
 gpm check [package] [package2]
 ```
 
 ####List Installed Packages
-```bash
+```
 gpm list
 ```
-####Sync Package List with Server
-```bash
-gpm update packages
-```
 
-Or, a much shorter way:
-
-```bash
-gpm u pkg
-```
 
 
 ##FAQ
 ###So why is it "generic"?
-I dunno. The name "GPM" just sounds cool to me. I guess you could say it installs packages not for specific languages/environments (unlike npm, pip, etc.). 
+I dunno. The name "GPM" just sounds cool to me. I guess you could say because it installs packages that are not not for specific languages or environments (unlike npm, pip, etc.). 
 
 ###Huh. So how do I make my own package?
 Easy! A simple package called "testing" (which, when run, echoes the word "testing" back.) would look like this:
