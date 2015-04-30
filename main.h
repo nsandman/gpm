@@ -11,7 +11,8 @@
 #include "json.h"
 
 // Macros:
-#define MAX_L 4096
+#define MAX_L 4096			/* for replaceAll() */
+#define GPMVERSION "0012"
 
 // Ints:
 char *dlUrl;
@@ -24,7 +25,7 @@ FILE *downloadedFile;
 cJSON *jCurlParse;
 cJSON *cmds;
 CURL *curl;
-int ran = 1;
+int packageFound = 1;
 int timesRun;
 
 size_t curlToVar(void *ptr, size_t size, size_t nmemb, ...) {
@@ -46,7 +47,7 @@ size_t curlToVar(void *ptr, size_t size, size_t nmemb, ...) {
 	return size * nmemb; 			/* Return bytes left to write (for cURL) */
 }
 
-void replaceAll(char * o_string, char * s_string, char * r_string) {
+void replaceAll(char *o_string, char *s_string, char *r_string) {
       char buffer[MAX_L];
       char * ch;
 
@@ -57,7 +58,20 @@ void replaceAll(char * o_string, char * s_string, char * r_string) {
       o_string[0] = 0;
       strcpy(o_string, buffer);
       return replaceAll(o_string, s_string, r_string);
- }
+}
+
+void printHelp() {
+	printf("GPM v%s by Noah Sandman\n", GPMVERSION);
+	printf("\033[1;30mABOUT GPM:\033[0m\n");
+	printf("\tGPM is a package manager that uses JSON files with a URL and commands for its package files.\n\n");
+	printf("\033[1;30mUSAGE - [package2] is always optional:\033[0m\n");
+	printf("\t- \033[0;32mgpm \033[0;34minstall\033[0;36m|\033[0;34mi\033[0;31m [package1] [package2]\033[0m\n");
+	printf("\t- \033[0;32mgpm \033[0;34mremove\033[0;36m|\033[0;34mr\033[0;31m\033[0;36m|\033[0;34muninstall\033[0;31m [package1] [package2]\033[0m\n");
+	printf("\t- \033[0;32mgpm \033[0;34mcheck\033[0;36m|\033[0;34mc\033[0;31m [package1] [package2]\033[0;33m to see if [package1] and [package2] are installed.\033[0m\n");
+	printf("\t- \033[0;32mgpm \033[0;34mlist\033[0;36m|\033[0;34ml\033[0;36m|\033[0;34minstalled\033[0;33m to list ALL installed packages.\033[0m\n");
+	printf("\t- \033[0;32mgpm \033[0;34mhelp\033[0;36m|\033[0;34mh\033[0;33m to see this message.\033[0m\n");
+	exit(0);
+}
 
 void clearVar(void *varToClear, int reset) {
 	/* Clear a var with memset, usually for cURL. */
@@ -66,8 +80,8 @@ void clearVar(void *varToClear, int reset) {
 }
 
 void cleanupMain() {				/* Free all malloc'd pointers */
-	if (ran == 1) {
-		free(dlUrl);			/* This must be done manually for some reason */
+	if (packageFound == 1) {				/* Only free() if package was found */
+		free(dlUrl);
 		free(downloadedFileName);
 	}
 	free(currentChunk);

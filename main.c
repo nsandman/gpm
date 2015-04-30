@@ -37,17 +37,20 @@ int main(int argc, char *argv[]) {
 						replaceAll(tmpCmd, "{GPMDIR}", gpmdir);
 						system(tmpCmd);
 					}
-				} else {
-					ran = 0;
+				} 
+				else {
+					packageFound = 0;
 					printf("\033[0;31mPackage \"%s\" not found, skipping...\033[0m\n", currentArg);
 				}
 			}
-		} else {
+		} 
+		else if (strcmp((char*)argv[1], "help") == 0 || strcmp((char*)argv[1], "h") == 0) printHelp();
+		else {
 			printf("\033[0;31mUnknown param \"%s\"!\033[0m\n", (char*)argv[1]);
 			exit(0);			/* Avoid "Done." being printed */
 		}
 	} else {
-		printf("\033[0;31mNo params entered!\033[0m\n");
+		printHelp();
 		exit(0);
 	}
 	/* Run function cleanups */
