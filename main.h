@@ -16,6 +16,7 @@
 
 // Ints:
 char *dlUrl;
+char *toMove;
 char *gpmdir;
 char *currentChunk;
 char *CurlResult;
@@ -60,8 +61,8 @@ void replaceAll(char *o_string, char *s_string, char *r_string) {
       return replaceAll(o_string, s_string, r_string);
 }
 
-void printHelp(char *em) {
-	if (strcmp(em, "") != 0) printf("%s\n", em);
+void printHelp(char *errorMessage) {
+	if (strcmp(errorMessage, "") != 0) printf("%s\n", errorMessage);
 	printf("GPM v%s by Noah Sandman\n", GPMVERSION);
 	printf("\033[1;30mABOUT GPM:\033[0m\n");
 	printf("\tGPM is a package manager that uses JSON files with a URL and commands for its package files.\n\n");
@@ -81,9 +82,11 @@ void clearVar(void *varToClear, int reset) {
 }
 
 void cleanupMain() {				/* Free all malloc'd pointers */
-	if (packageFound == 1) {				/* Only free() if package was found */
+	/* Only free() if package was found */
+	if (packageFound == 1) {
 		free(dlUrl);
 		free(downloadedFileName);
+		free(toMove);
 	}
 	free(currentChunk);
 	free(CurlResult);
