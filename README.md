@@ -3,7 +3,7 @@
 This is a lightweight package manager designed to be easy to use and easy to make packages for. It is inspired by Homebrew, but is different in many regards:
 
 1. Packages are JSON files with one URL and bash commands, not Ruby scripts with methods.
-2. Packages are stored on a [server](http://github.com/nsandman09/gpm-packages), and you do **not** have to fork it to add custom packages.
+2. Packages are stored [online](http://github.com/nsandman09/gpm-packages), and you do **not** have to fork it to add custom packages.
 3. GPM is written in C, not Ruby.
 4. GPM modifies your $PATH variable instead of symlinking all installs.
 5. Oh yeah, and it's cross-platform.
@@ -75,7 +75,7 @@ Easy! A simple package called "testing" (which, when run, echoes the word "testi
 ```
 Looks simple enough. Let's break this down.
 
-GPM will first download the file in the URL. Then, it will run the commands in the array of the same name, giving you access to two variables:
+GPM will first download the file in the URL. Then, it will run the commands in the array of the same name, giving you access to two variables: (TODO: Add array named "default" for bash/sh commands and "win32" array for dos/powershell)
 
 * {FILENAME}: This is the path to the file downloaded from the URL.
 * {GPMDIR}: This is the path to the GPM installation directory. This is usually ~/.gpm.
