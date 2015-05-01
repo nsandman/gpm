@@ -75,7 +75,7 @@ Easy! A simple package called "testing" (which, when run, echoes the word "testi
 ```
 Looks simple enough. Let's break this down.
 
-GPM will first download the file in the URL. Then, it will run the commands in the array of the same name, giving you access to two variables: (TODO: Add array named "default" for bash/sh commands and "win32" array for dos/powershell)
+GPM will first download the file in the URL. Then, it will run the commands in the array of the same name, giving you access to two variables: (**TODO**: Add array named "default" for bash/sh commands and "win32" array for DOS/PowerShell)
 
 * {FILENAME}: This is the path to the file downloaded from the URL.
 * {GPMDIR}: This is the path to the GPM installation directory. This is usually ~/.gpm.
