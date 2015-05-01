@@ -23,7 +23,11 @@ int main(int argc, char *argv[]) {
 					if (strcmp(CurlResult, "Not Found") != 0) {
 						printf("\033[0;32mPackage \"%s\" found, installing...\033[0m\n", currentArg);
 						jCurlParse = cJSON_Parse(CurlResult);
+						#ifndef _WIN32
 						cmds = cJSON_GetObjectItem(jCurlParse,"commands");
+						#else
+						cmds = cJSON_GetObjectItem(jCurlParse,"win32");
+						#endif
 						urlFromJson = cJSON_Print(cJSON_GetObjectItem(jCurlParse,"url"));
 						clearVar(CurlResult, 1);
 						curl_easy_setopt(curl, CURLOPT_URL, urlFromJson);
@@ -35,7 +39,7 @@ int main(int argc, char *argv[]) {
 						fprintf(downloadedFile, "%s", CurlResult);
 						fclose(downloadedFile);
 						for (int b = 0; b < cJSON_GetArraySize(cmds); b++) {
-							char *tmpCmd = cJSON_Print(cJSON_GetArrayItem(cmds, b));
+							char *tmpCmd = cJSON_Print(cJSON_GetArrayItem(defaults, b));
 							replaceAll(tmpCmd, "{FILENAME}", downloadedFileName);
 							replaceAll(tmpCmd, "{GPMDIR}", gpmdir);
 							replaceAll(tmpCmd, "\\\"", "\"");			/* Replace escaped quotes with legit ones */
