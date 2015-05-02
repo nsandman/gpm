@@ -2,9 +2,10 @@
 
 int main(int argc, char *argv[]) {
 	gpmdir = strcat(getenv("HOME"), "/.gpm");
+	rGtxt = malloc(1);
 	dlUrl = malloc(1);
-	downloadedFileName = malloc(1);
 	toMove = malloc(1);
+	downloadedFileName = malloc(1);
 	curl = curl_easy_init();
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
 	if (argc > 1) {
@@ -14,9 +15,7 @@ int main(int argc, char *argv[]) {
 				for (int a = 2; a < argc; a++) {
 					char *currentArg = argv[a];
 					dlUrl = realloc(dlUrl, 68 + strlen(currentArg));
-					strcpy(dlUrl, "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/");
-					strcat(dlUrl, currentArg);
-					strcat(dlUrl, ".gpm");
+					sprintf(dlUrl, "https://raw.githubusercontent.com/nsandman09/gpm-packages/master/%s.gpm", currentArg);
 					clearVar(CurlResult, 1);
 					curl_easy_setopt(curl, CURLOPT_URL, dlUrl);
 					curl_easy_perform(curl);
@@ -29,8 +28,7 @@ int main(int argc, char *argv[]) {
 						curl_easy_setopt(curl, CURLOPT_URL, urlFromJson);
 						curl_easy_perform(curl);
 						downloadedFileName = realloc(downloadedFileName, strlen(gpmdir) + strlen(currentArg) + 5);
-						strcpy(downloadedFileName, gpmdir);
-						strcat(downloadedFileName, "/tmp/");
+						sprintf(downloadedFileName, "%s/tmp/", gpmdir);
 						downloadedFile = fopen(strcat(downloadedFileName, currentArg), "w");
 						fprintf(downloadedFile, "%s", CurlResult);
 						fclose(downloadedFile);
@@ -45,6 +43,8 @@ int main(int argc, char *argv[]) {
 						strcpy(toMove, downloadedFileName);
 						replaceAll(toMove, "/tmp/", "/installed/");
 						rename(downloadedFileName, toMove);
+						iGpi = fopen(strcat(gpmdir, "/installed/_installed.gpi"), "r");
+						printf("%s\n", rGtxt);
 					} else {
 						packageFound = 0;
 						printf("\033[0;31mPackage \"%s\" not found, skipping...\033[0m\n", currentArg);
