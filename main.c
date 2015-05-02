@@ -1,10 +1,14 @@
 #include "main.h"
 
 int main(int argc, char *argv[]) {
+	#ifndef _WIN32
 	gpmdir = strcat(getenv("HOME"), "/.gpm");
-	rGtxt = malloc(1);
+	#else
+	gpmdir = strcat(getenv("HOME"), "\\.gpm");
+	#endif
 	dlUrl = malloc(1);
 	toMove = malloc(1);
+	char *installedGpiText = malloc(1);
 	downloadedFileName = malloc(1);
 	curl = curl_easy_init();
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlToVar);
@@ -22,7 +26,7 @@ int main(int argc, char *argv[]) {
 					if (strcmp(CurlResult, "Not Found") != 0) {
 						printf("\033[0;32mPackage \"%s\" found, installing...\033[0m\n", currentArg);
 						jCurlParse = cJSON_Parse(CurlResult);
-						#ifndef _BLOCK
+						#ifndef _WIN32
 						cmds = cJSON_GetObjectItem(jCurlParse,"default");
 						#else
 						if((cmds = cJSON_GetObjectItem(jCurlParse,"win32")) != NULL) cJSON_GetObjectItem(jCurlParse,"default");
@@ -32,7 +36,11 @@ int main(int argc, char *argv[]) {
 						curl_easy_setopt(curl, CURLOPT_URL, urlFromJson);
 						curl_easy_perform(curl);
 						downloadedFileName = realloc(downloadedFileName, strlen(gpmdir) + strlen(currentArg) + 5);
+						#ifndef _WIN32
 						sprintf(downloadedFileName, "%s/tmp/", gpmdir);
+						#else
+						sprintf(downloadedFileName, "%s\\tmp\\", gpmdir);
+						#endif
 						downloadedFile = fopen(strcat(downloadedFileName, currentArg), "w");
 						fprintf(downloadedFile, "%s", CurlResult);
 						fclose(downloadedFile);
@@ -45,10 +53,24 @@ int main(int argc, char *argv[]) {
 						}
 						toMove = realloc(toMove, strlen(downloadedFileName) + 6);
 						strcpy(toMove, downloadedFileName);
+						#ifndef _WIN32
 						replaceAll(toMove, "/tmp/", "/installed/");
+						#else
+						replaceAll(toMove, "\\tmp\\", "\\installed\\");
+						#endif
 						rename(downloadedFileName, toMove);
-						iGpi = fopen(strcat(gpmdir, "/installed/_installed.gpi"), "r");
-						printf("%s\n", rGtxt);
+						#ifndef _WIN32
+						iGpi = fopen(strcat(gpmdir, "/installed/_installed.gpi"), "r+");
+						#else
+						iGpi = fopen(strcat(gpmdir, "\\installed\\_installed.gpi"), "r+");
+						#endif
+						while ((installedGpi = fgetc(iGpi)) != EOF) {
+							const char *tempString = &installedGpi;
+							installedGpiText = realloc(installedGpiText, strlen(installedGpiText) + 1);
+							strcat(installedGpiText, tempString);
+						}
+						printf("%s\n", installedGpiText);
+						fclose(iGpi);
 					} else {
 						packageFound = 0;
 						printf("\033[0;31mPackage \"%s\" not found, skipping...\033[0m\n", currentArg);

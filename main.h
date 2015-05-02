@@ -12,17 +12,17 @@
 
 // Macros:
 #define MAX_L 4096			/* for replaceAll() */
-#define GPMVERSION "43015"
+#define GPMVERSION "5115"
 
-// Ints:
+// Defining:
 char *dlUrl;
 char *toMove;
 char *gpmdir;
-char *rGtxt;
 char *currentChunk;
 char *CurlResult;
 char *downloadedFileName;
 char *urlFromJson;
+char installedGpi;
 FILE *downloadedFile;
 FILE *iGpi;
 cJSON *jCurlParse;
@@ -84,10 +84,6 @@ void clearVar(void *varToClear, int reset) {
 }
 
 void cleanupMain() {				/* Free all malloc'd pointers */
-	/* Only free() if package was found */
-	if (packageFound == 1) {
-		free(toMove);
-	}
 	free(currentChunk);
 	free(CurlResult);
 }
