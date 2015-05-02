@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 					if (strcmp(CurlResult, "Not Found") != 0) {
 						printf("\033[0;32mPackage \"%s\" found, installing...\033[0m\n", currentArg);
 						jCurlParse = cJSON_Parse(CurlResult);
-						#ifndef _WIN32
+						#ifndef _BLOCK
 						cmds = cJSON_GetObjectItem(jCurlParse,"default");
 						#else
 						if((cmds = cJSON_GetObjectItem(jCurlParse,"win32")) != NULL) cJSON_GetObjectItem(jCurlParse,"default");

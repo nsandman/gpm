@@ -23,7 +23,7 @@ GPM creates a folder in your home directory called .gpm. This is its structure:
 .gpm
  +-- installed
  |   +-- _installed.gpi
- |   +-- gpm
+ |   +-- *anything else installed*
  +-- tmp
 ```
 The "installed" folder is the actual directory that gets added to your PATH. All packages installed by GPM go here.
@@ -38,12 +38,12 @@ Using GPM is relatively simple.
 ####Installing
 
 ```
-gpm install [package]
+gpm install [package] [package2]
 ```
 
 ####Removing
 ```
-gpm remove [package]
+gpm remove [package] [package2]
 ```
 
 ####Check if Package(s) Installed
@@ -68,14 +68,17 @@ Easy! A simple package called "testing" (which, when run, echoes the word "testi
 ```json
 {
 	"url": "http://links.bargonaut.com/gpm/testing",
-	"commands": [
+	"default": [
 		"chmod +x {FILENAME}"
+	],
+	"win32": [
+		"icacls {FILENAME} /grant Everyone:rx"
 	]
 }
 ```
 Looks simple enough. Let's break this down.
 
-GPM will first download the file in the URL. Then, it will run the commands in the array of the same name, giving you access to two variables: (**TODO**: Add array named "default" for bash/sh commands and "win32" array for DOS/PowerShell)
+GPM will first download the file in the URL. Then, it will run the commands in the "default" array on most systems, but using the "win32" array on Windows. If no "win32" is there, Windows will run the "default" commands. GPM will give you access to two variables:
 
 * {FILENAME}: This is the path to the file downloaded from the URL.
 * {GPMDIR}: This is the path to the GPM installation directory. This is usually ~/.gpm.
@@ -85,7 +88,7 @@ Let's write a slightly more complex one. This downloads and installs node.js:
 ```json
 {
 	"url": "https://semver.io/node/stable",
-	"commands": [
+	"default": [
 		"echo \"Downloading latest node.js source...\"",
 		"curl --progress-bar http://nodejs.org/dist/v`cat {FILENAME}`/node-v`cat {FILENAME}`.tar.gz > {GPMDIR}/tmp/node.tgz ",
 		"echo \"Extracting...\"",
@@ -103,7 +106,7 @@ It looks like a lot, but don't be daunted. Remove all the "echo" commands and it
 ```json
 {
 	"url": "https://semver.io/node/stable",
-	"commands": [
+	"default": [
 		"curl --progress-bar http://nodejs.org/dist/v`cat {FILENAME}`/node-v`cat {FILENAME}`.tar.gz > {GPMDIR}/tmp/node.tgz ",
 		"tar -xf {GPMDIR}/tmp/node.tgz -C {GPMDIR}/tmp",
 		"{GPMDIR}/tmp/node-v`cat {FILENAME}`/configure --prefix={GPMDIR}/installed",
@@ -118,7 +121,7 @@ Okay, that's easier to read. Now let's look at this. It downloads the latest nod
 ```json
 {
 	"url": "https://semver.io/node/stable",
-	"commands": [
+	"default": [
 		"curl --progress-bar http://nodejs.org/dist/v0.12.2/node-v0.12.2.tar.gz > {GPMDIR}/tmp/node.tgz ",
 		"tar -xf {GPMDIR}/tmp/node.tgz -C {GPMDIR}/tmp",
 		"{GPMDIR}/tmp/node-v0.12.2/configure --prefix={GPMDIR}/installed",
