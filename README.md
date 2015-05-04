@@ -55,6 +55,10 @@ gpm check [package] [package2]
 ```
 gpm list
 ```
+####Get Package Info
+```
+gpm about [package][package2]
+```
 
 
 
